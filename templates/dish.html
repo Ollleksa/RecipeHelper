@@ -1,0 +1,18 @@
+<html>
+<head>
+    <title>{{ dish_name }} - RecipeHelper</title>
+</head>
+<body>
+<h2>{{ dish_name }}</h2>
+<h3>Ingredients:</h3>
+{% if ingredients_list %}
+<ul>
+    {% for ing in ingredients_list %}
+    <li>{{ ing.ingredient.name }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<p>{{dish_description}}</p>
+</body>
+
+</html>
