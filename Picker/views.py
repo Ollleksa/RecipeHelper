@@ -1,11 +1,19 @@
-from django.http import HttpResponse, Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import render
+from django.template import loader
 
-from .models import Ingredient, Dish, Recipe
+from .models import Ingredient, Dish, Recipe, Fridge
+from .forms import NewIngredient
 
 
 def index(request):
-    return HttpResponse("Hello, world.")
+    current_user = request.user
+    fridge_ing = Fridge.objects.filter(user_id = current_user.id, is_available = True).select_related('ingredient')
+    context = {
+        'user': current_user,
+        'ing_list': fridge_ing,
+    }
+    return render(request, 'home.html', context)
 
 
 def ing(request, ingredient_id):
@@ -33,3 +41,29 @@ def recipe(request, dish_id):
         'dish_description': rec.description,
     }
     return render(request, 'dish.html', context)
+
+
+def catalog_ingredient(request):
+    if request.method == 'POST':
+        form = NewIngredient(request.POST)
+        if form.is_valid():
+            ing = Ingredient(name=form.cleaned_data['name'], units=form.cleaned_data['units'], description=form.cleaned_data['description'])
+            ing.save()
+    else:
+        form=NewIngredient()
+
+    ing_list = Ingredient.objects.all()
+    template = loader.get_template('ingredient_catalog.html')
+    context = {
+        'ingredients_list': ing_list,
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def catalog_recipe(request):
+    dish_list = Dish.objects.all()
+    context = {
+        'dish_list': dish_list,
+    }
+    return render(request, 'catalog.html', context)

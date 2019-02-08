@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>Ingredients</title>
+</head>
+<body>
+<h2>Ingredient catalog</h2>
+<h3>Ingredients:</h3>
+{% if ingredients_list %}
+<ul>
+    {% for ing in ingredients_list %}
+    <li><a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a></li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Add">
+</form>
+</body>
+</html>

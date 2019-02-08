@@ -1,18 +1,17 @@
 <html>
 <head>
-    <title>{{ dish_name }} - RecipeHelper</title>
+    <title>RecipeHelper</title>
 </head>
 <body>
-<h2>{{ dish_name }}</h2>
-<h3>Ingredients:</h3>
-{% if ingredients_list %}
+<h2>Hi {{ user.username }}!</h2>
+<h3>It is your fridge:</h3>
+{% if ing_list %}
 <ul>
-    {% for ing in ingredients_list %}
+    {% for ing in ing_list %}
     <li><a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.ingredient.units }}</li>
     {% endfor %}
 </ul>
 {% endif %}
-<p>{{dish_description}}</p>
 </body>
 
 </html>

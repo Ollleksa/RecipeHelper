@@ -1,0 +1,17 @@
+<html>
+<head>
+    <title>All dishes</title>
+</head>
+<body>
+<h2>Recepy catalog</h2>
+<h3>Dishes:</h3>
+{% if dish_list %}
+<ul>
+    {% for dish in dish_list %}
+    <li><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a></li>
+    {% endfor %}
+</ul>
+{% endif %}
+</body>
+
+</html>
