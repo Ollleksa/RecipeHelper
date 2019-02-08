@@ -48,3 +48,10 @@ class Fridge(models.Model):
             insert = ''
         description = "Record {0}: User {1} {2}have {3}.".format(self.id, self.user.username, insert, self.ingredient.name)
         return description
+
+
+def recipe_finder(user):
+    recipes = Recipe.objects.exclude(ingredient__fridge__user__id = user.id, ingredient__fridge__is_available = True).values('dish__id')
+    dishes = Dish.objects.filter(recipe__ingredient__fridge__user__id = user.id, recipe__ingredient__fridge__is_available = True).values('id')
+    available_dish_id = dishes.difference(recipes)
+    return available_dish_id

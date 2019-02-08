@@ -2,16 +2,19 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from django.template import loader
 
-from .models import Ingredient, Dish, Recipe, Fridge
+from .models import Ingredient, Dish, Recipe, Fridge, recipe_finder
 from .forms import NewIngredient
 
 
 def index(request):
     current_user = request.user
     fridge_ing = Fridge.objects.filter(user_id = current_user.id, is_available = True).select_related('ingredient')
+    available_dish_id = recipe_finder(current_user)
+    dish_list = [Dish.objects.get(id=i['id']) for i in available_dish_id]
     context = {
         'user': current_user,
         'ing_list': fridge_ing,
+        'dish_list': dish_list,
     }
     return render(request, 'home.html', context)
 

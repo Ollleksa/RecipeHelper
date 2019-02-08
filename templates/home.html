@@ -8,7 +8,15 @@
 {% if ing_list %}
 <ul>
     {% for ing in ing_list %}
-    <li><a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.ingredient.units }}</li>
+    <li><a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a></li>
+    {% endfor %}
+</ul>
+{% endif %}
+<h3>You can cook next:</h3>
+{% if dish_list %}
+<ul>
+    {% for dish in dish_list %}
+    <li><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a>
     {% endfor %}
 </ul>
 {% endif %}
