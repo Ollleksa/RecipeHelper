@@ -9,9 +9,21 @@
 <ul>
     {% for ing in ing_list %}
     <li><a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a></li>
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+    </form>
     {% endfor %}
 </ul>
 {% endif %}
+
+<h2>Add new stock</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Add">
+</form>
+
 <h3>You can cook next:</h3>
 {% if dish_list %}
 <ul>

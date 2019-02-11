@@ -12,6 +12,13 @@
     {% endfor %}
 </ul>
 {% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Add">
+</form>
+
 <p>{{dish_description}}</p>
 </body>
 
