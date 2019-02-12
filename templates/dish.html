@@ -1,11 +1,17 @@
-<html>
-<head>
-    <title>{{ dish_name }} - RecipeHelper</title>
-</head>
-<body>
-<a href="{% url 'index' %}">Go to fridge.</a>
-<a href="{% url 'ing_cat' %}">Ingridients</a>
-<a href="{% url 'catalog' %}">Dishes</a>
+{% extends 'base.html' %}
+
+{% block title %}RecipeHelper - {{ dish_name }}{% endblock %}
+
+{% block nav %}
+<nav>
+    <a href="{% url 'index' %}">Home.</a>
+    <a href="{% url 'ing_cat' %}">Ingridients</a>
+    <a href="{% url 'catalog' %}">Dishes</a>
+    <a>Help</a>
+</nav>
+{% endblock %}
+
+{% block content %}
 <h2>{{ dish_name }}</h2>
 <h3>Ingredients:</h3>
 {% if ingredients_list %}
@@ -29,6 +35,8 @@
 </form>
 
 <p>{{dish_description}}</p>
+
+{% endblock %}
 </body>
 
 </html>

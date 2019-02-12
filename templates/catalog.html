@@ -1,11 +1,17 @@
-<html>
-<head>
-    <title>All dishes</title>
-</head>
-<body>
-<a href="{% url 'index' %}">Go to fridge.</a>
-<a href="{% url 'ing_cat' %}">Ingridients</a>
-<a href="{% url 'catalog' %}">Dishes</a>
+{% extends 'base.html' %}
+
+{% block title %}RecipeHelper - Catalog{% endblock %}
+
+{% block nav %}
+<nav>
+    <a href="{% url 'index' %}">Home.</a>
+    <a href="{% url 'ing_cat' %}">Ingridients</a>
+    <a class="active" href="{% url 'catalog' %}">Dishes</a>
+    <a>Help</a>
+</nav>
+{% endblock %}
+
+{% block content %}
 <h2>Recepy catalog</h2>
 <h3>Dishes:</h3>
 {% if dish_list %}
@@ -22,6 +28,4 @@
     {{ form }}
     <input type="submit" value="Add">
 </form>
-</body>
-
-</html>
+{% endblock %}

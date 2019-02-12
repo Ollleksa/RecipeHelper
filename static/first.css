@@ -4,21 +4,48 @@ body {
 
 header, footer {
     text-align: center;
-    padding: 10px;
+    padding: 10px 0px;
+    width: 100%;
+    margin: 0px;
 }
 
 header {
-  color: white;
-  background-color: lightseagreen;
+    color: white;
+    background-color: lightseagreen;
 }
 
 footer {
-  color: white;
-  background-color: mediumaquamarine;
+    color: black;
+    background-color: mediumaquamarine;
 }
 
 nav {
+    width: 100%;
     background-color: #ffaa80;
+    padding: 10px 0px;
+    overflow: hidden;
+}
+
+nav a {
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+nav a:hover {
+    background-color: #ffff99;
+    color: black;
+}
+
+nav a.active {
+    background-color: #b36b00;
+    color: white;
+}
+
+span.email {
+    text-decoration: underline;
 }
 
 .wrapper {

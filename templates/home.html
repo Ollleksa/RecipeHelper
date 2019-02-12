@@ -1,26 +1,9 @@
-<!DOCTYPE html>
-{% load static %}
-<html>
-<head>
-    <title>RecipeHelper</title>
-    <link rel="stylesheet" href="{% static 'first.css' %}" type="text/css">
-</head>
+{% extends 'base.html' %}
 
-<body>
-<header>
-    <h2>RecipeHelper</h2>
-    <p>Best app for finding what to cook.</p>
-</header>
+{% block title %}RecipeHelper - Catalog{% endblock %}
 
-<nav>
-    <ul>
-        <li><a href="{% url 'index' %}">Go to fridge.</a></li>
-        <li><a href="{% url 'ing_cat' %}">Ingridients</a></li>
-        <li><a href="{% url 'catalog' %}">Dishes</a></li>
-    </ul>
-</nav>
-
-<h2>Hi {{ user.username }}!</h2>
+{% block content %}
+<h2>Hi {{ user.username }}! Welcome back!</h2>
 
 <div class="wrapper">
 <div class="fridge">
@@ -35,6 +18,8 @@
         </form>
         {% endfor %}
     </ul>
+    {% else %}
+    <p>You fridge is empty :(</p>
     {% endif %}
 
     <h2>Add new stock</h2>
@@ -53,10 +38,10 @@
         <li><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a>
         {% endfor %}
     </ul>
+    {% else %}
+    <p>You had nothing to cook. Time for shopping?</p>
     {% endif %}
 </div>
 </div>
 
-<footer> Footer </footer>
-</body>
-</html>
+{% endblock %}

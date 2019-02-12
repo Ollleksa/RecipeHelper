@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>{% block title %}RecipeHelper{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'first.css' %}" type="text/css">
+</head>
+
+<body>
+<header>
+    <h2>RecipeHelper</h2>
+    <p>Best app for finding what to cook.</p>
+</header>
+
+{% block nav %}
+<nav>
+    <a class="active" href="{% url 'index' %}">Home.</a>
+    <a href="{% url 'ing_cat' %}">Ingridients</a>
+    <a href="{% url 'catalog' %}">Dishes</a>
+    <a>Help</a>
+</nav>
+{% endblock %}
+
+{% block content %}{% endblock %}
+
+<footer>
+    Questions and feedback send to <span class="email">test@test.test.</span>
+</footer>
+</body>
+</html>
