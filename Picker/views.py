@@ -12,21 +12,28 @@ def index(request):
     fridge_ing = Fridge.objects.filter(user_id = current_user.id, is_available = True).select_related('ingredient')
 
     if request.method == 'POST':
+        is_deleted = False
         for temp in fridge_ing:
             if str(temp.ingredient_id) in request.POST:
                 temp.is_available = False
                 temp.save()
+                form = AddIngredient()
+                is_deleted = True
+                break
 
-        form = AddIngredient(request.POST)
-        if form.is_valid():
-            ing_id = form.cleaned_data['ingredient']
-            try:
-                k = Fridge.objects.get(user_id = current_user.id, ingredient_id = ing_id)
-                k.is_available = True
-                k.save()
-            except Fridge.DoesNotExist:
-                k = Fridge(user_id = current_user.id, ingredient_id = ing_id)
-                k.save()
+        if not is_deleted:
+            form = AddIngredient(request.POST)
+            if form.is_valid():
+                ing_id = form.cleaned_data['ingredient']
+                try:
+                    k = Fridge.objects.get(user_id = current_user.id, ingredient_id = ing_id)
+                    k.is_available = True
+                    k.save()
+                except Fridge.DoesNotExist:
+                    k = Fridge(user_id = current_user.id, ingredient_id = ing_id)
+                    k.save()
+
+        fridge_ing = Fridge.objects.filter(user_id=current_user.id, is_available=True).select_related('ingredient')
     else:
         form = AddIngredient()
 
@@ -60,16 +67,26 @@ def recipe(request, dish_id):
     except Dish.DoesNotExist:
         raise Http404("There is no such recipe.")
 
+    ing_list = Recipe.objects.filter(dish_id=dish_id).select_related('ingredient')
     if request.method == 'POST':
-        form = DishForm(request.POST)
-        if form.is_valid():
-            ing2rec = Recipe(dish_id = dish_id, ingredient_id = form.cleaned_data['ingredient'],
-                             amount=form.cleaned_data['amount'])
-            ing2rec.save()
+        is_deleted = False
+        for temp in ing_list:
+            if str(temp.ingredient_id) in request.POST:
+                Recipe.objects.filter(pk=temp.pk).delete()
+                form = DishForm()
+                is_deleted = True
+                break
+
+        if not is_deleted:
+            form = DishForm(request.POST)
+            if form.is_valid():
+                ing2rec = Recipe(dish_id = dish_id, ingredient_id = form.cleaned_data['ingredient'],
+                                 amount=form.cleaned_data['amount'])
+                ing2rec.save()
+        ing_list = Recipe.objects.filter(dish_id=dish_id).select_related('ingredient')
     else:
         form = DishForm()
 
-    ing_list = Recipe.objects.filter(dish_id = dish_id).select_related('ingredient')
     template = loader.get_template('dish.html')
     context = {
         'dish_name': rec.name,
@@ -81,15 +98,25 @@ def recipe(request, dish_id):
 
 
 def catalog_ingredient(request):
+    ing_list = Ingredient.objects.all()
     if request.method == 'POST':
-        form = NewIngredient(request.POST)
-        if form.is_valid():
-            ing = Ingredient(name=form.cleaned_data['name'], units=form.cleaned_data['units'], description=form.cleaned_data['description'])
-            ing.save()
+        is_deleted = False
+        for temp in ing_list:
+            if str(temp.id) in request.POST:
+                Ingredient.objects.filter(pk=temp.pk).delete()
+                form = NewIngredient()
+                is_deleted = True
+                break
+
+        if not is_deleted:
+            form = NewIngredient(request.POST)
+            if form.is_valid():
+                ing = Ingredient(name=form.cleaned_data['name'], units=form.cleaned_data['units'], description=form.cleaned_data['description'])
+                ing.save()
+        ing_list = Ingredient.objects.all()
     else:
         form=NewIngredient()
 
-    ing_list = Ingredient.objects.all()
     template = loader.get_template('ingredient_catalog.html')
     context = {
         'ingredients_list': ing_list,

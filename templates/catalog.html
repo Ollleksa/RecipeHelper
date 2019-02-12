@@ -3,6 +3,9 @@
     <title>All dishes</title>
 </head>
 <body>
+<a href="{% url 'index' %}">Go to fridge.</a>
+<a href="{% url 'ing_cat' %}">Ingridients</a>
+<a href="{% url 'catalog' %}">Dishes</a>
 <h2>Recepy catalog</h2>
 <h3>Dishes:</h3>
 {% if dish_list %}

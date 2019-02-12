@@ -3,12 +3,19 @@
     <title>Ingredients</title>
 </head>
 <body>
+<a href="{% url 'index' %}">Go to fridge.</a>
+<a href="{% url 'ing_cat' %}">Ingridients</a>
+<a href="{% url 'catalog' %}">Dishes</a>
 <h2>Ingredient catalog</h2>
 <h3>Ingredients:</h3>
 {% if ingredients_list %}
 <ul>
     {% for ing in ingredients_list %}
     <li><a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a></li>
+    <form method="post" >
+        {% csrf_token %}
+        <input type="submit" name = "{{ ing.id}}" value="Delete">
+    </form>
     {% endfor %}
 </ul>
 {% endif %}

@@ -1,37 +1,62 @@
+<!DOCTYPE html>
+{% load static %}
 <html>
 <head>
     <title>RecipeHelper</title>
+    <link rel="stylesheet" href="{% static 'first.css' %}" type="text/css">
 </head>
+
 <body>
+<header>
+    <h2>RecipeHelper</h2>
+    <p>Best app for finding what to cook.</p>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="{% url 'index' %}">Go to fridge.</a></li>
+        <li><a href="{% url 'ing_cat' %}">Ingridients</a></li>
+        <li><a href="{% url 'catalog' %}">Dishes</a></li>
+    </ul>
+</nav>
+
 <h2>Hi {{ user.username }}!</h2>
-<h3>It is your fridge:</h3>
-{% if ing_list %}
-<ul>
-    {% for ing in ing_list %}
-    <li><a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a></li>
+
+<div class="wrapper">
+<div class="fridge">
+    <h3>It is your fridge:</h3>
+    {% if ing_list %}
+    <ul>
+        {% for ing in ing_list %}
+        <li><a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a></li>
+        <form method="post" >
+            {% csrf_token %}
+            <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+        </form>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <h2>Add new stock</h2>
     <form method="post">
         {% csrf_token %}
-        <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+        {{ form }}
+        <input type="submit" value="Add">
     </form>
-    {% endfor %}
-</ul>
-{% endif %}
+</div>
 
-<h2>Add new stock</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Add">
-</form>
+<div class="posibilities">
+    <h3>You can cook next:</h3>
+    {% if dish_list %}
+    <ul>
+        {% for dish in dish_list %}
+        <li><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+</div>
 
-<h3>You can cook next:</h3>
-{% if dish_list %}
-<ul>
-    {% for dish in dish_list %}
-    <li><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a>
-    {% endfor %}
-</ul>
-{% endif %}
+<footer> Footer </footer>
 </body>
-
 </html>

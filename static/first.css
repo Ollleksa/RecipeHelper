@@ -1,0 +1,27 @@
+body {
+    background-color: #ffcc99;
+}
+
+header, footer {
+    text-align: center;
+    padding: 10px;
+}
+
+header {
+  color: white;
+  background-color: lightseagreen;
+}
+
+footer {
+  color: white;
+  background-color: mediumaquamarine;
+}
+
+nav {
+    background-color: #ffaa80;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}

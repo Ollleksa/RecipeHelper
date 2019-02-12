@@ -3,6 +3,9 @@
     <title>{{ ing_name }} - RecipeHelper</title>
 </head>
 <body>
+<a href="{% url 'index' %}">Go to fridge.</a>
+<a href="{% url 'ing_cat' %}">Ingridients</a>
+<a href="{% url 'catalog' %}">Dishes</a>
 <h2>{{ ing_name }}</h2>
 <p>{{ing_description}}</p>
 </body>
