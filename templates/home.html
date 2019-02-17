@@ -9,15 +9,21 @@
 <div class="fridge">
     <h3>It is your fridge:</h3>
     {% if ing_list %}
-    <ul>
+    <table>
         {% for ing in ing_list %}
-        <li><a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a></li>
-        <form method="post" >
-            {% csrf_token %}
-            <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
-        </form>
+        <tr>
+        <th>
+            <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a>
+        </th>
+        <th>
+            <form method="post" >
+                {% csrf_token %}
+                <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+            </form>
+        </th>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
     {% else %}
     <p>You fridge is empty :(</p>
     {% endif %}

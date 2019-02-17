@@ -15,15 +15,18 @@
 <h2>Ingredient catalog</h2>
 <h3>Ingredients:</h3>
 {% if ingredients_list %}
-<ul>
+<table>
     {% for ing in ingredients_list %}
-    <li><a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a></li>
-    <form method="post" >
+    <tr>
+    <th>{{ ing.id }}</th>
+    <th><a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a></th>
+    <th><form method="post" >
         {% csrf_token %}
         <input type="submit" name = "{{ ing.id}}" value="Delete">
-    </form>
+    </form></th>
+    </tr>
     {% endfor %}
-</ul>
+</table>
 {% endif %}
 
 <form method="post">

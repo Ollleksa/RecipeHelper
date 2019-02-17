@@ -2,6 +2,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse_lazy
+from django.db import models
 
 from .models import Ingredient, Dish, Recipe, Fridge, recipe_finder
 from .forms import NewIngredient, NewDish, DishForm, AddIngredient
@@ -103,10 +104,15 @@ def catalog_ingredient(request):
         is_deleted = False
         for temp in ing_list:
             if str(temp.id) in request.POST:
-                Ingredient.objects.filter(pk=temp.pk).delete()
-                form = NewIngredient()
-                is_deleted = True
-                break
+                ing = Ingredient.objects.get(pk=temp.pk)
+                try:
+                    ing.delete()
+                    form = NewIngredient()
+                    is_deleted = True
+                    break
+                except models.ProtectedError:
+                    return ingredient_error(request, ing)
+
 
         if not is_deleted:
             form = NewIngredient(request.POST)
@@ -126,19 +132,40 @@ def catalog_ingredient(request):
 
 
 def catalog_recipe(request):
+    dish_list = Dish.objects.all()
     if request.method == 'POST':
-        form = NewDish(request.POST)
-        if form.is_valid():
-            d = Dish(name = form.cleaned_data['name'], description = form.cleaned_data['description'])
-            d.save()
-            return HttpResponseRedirect('{}'.format(d.id))
+        is_deleted = False
+        for temp in dish_list:
+            if str(temp.id) in request.POST:
+                Dish.objects.filter(pk=temp.pk).delete()
+                form = NewDish()
+                is_deleted = True
+                break
+
+        if not is_deleted:
+            form = NewDish(request.POST)
+            if form.is_valid():
+                d = Dish(name = form.cleaned_data['name'], description = form.cleaned_data['description'])
+                d.save()
+                return HttpResponseRedirect('{}'.format(d.id))
+        dish_list = Dish.objects.all()
     else:
         form = NewDish()
 
-    dish_list = Dish.objects.all()
     template = loader.get_template('catalog.html')
     context = {
         'dish_list': dish_list,
         'form': form,
     }
     return HttpResponse(template.render(context, request))
+
+def ingredient_error(request, ing):
+    ingredient_name = ing.name
+    recipes_list = Recipe.objects.filter(ingredient=ing.id)
+    template = loader.get_template('delete_error.html')
+    context = {
+        "ingredient_name": ingredient_name,
+        "recipes_list": recipes_list,
+
+    }
+    return HttpResponse(template.render(context,request))

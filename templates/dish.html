@@ -15,15 +15,15 @@
 <h2>{{ dish_name }}</h2>
 <h3>Ingredients:</h3>
 {% if ingredients_list %}
-<ul>
+<ul id="inline">
     {% for ing in ingredients_list %}
-    <li>
-        <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.ingredient.units }}
-        <form method="post" >
-            {% csrf_token %}
-            <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
-        </form>
-    </li>
+        <li>
+            <form method="post" >
+                <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.ingredient.units }}
+                {% csrf_token %}
+                <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+            </form>
+        </li>
     {% endfor %}
 </ul>
 {% endif %}
