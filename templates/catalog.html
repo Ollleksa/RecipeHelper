@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}RecipeHelper - Catalog{% endblock %}
+
+{% block nav %}
+<nav>
+    <a href="{% url 'index' %}">Home.</a>
+    <a href="{% url 'ing_cat' %}">Ingridients</a>
+    <a class="active" href="{% url 'catalog' %}">Dishes</a>
+    <a>Help</a>
+</nav>
+{% endblock %}
+
+{% block content %}
+<h2>Recepy catalog</h2>
+<h3>Dishes:</h3>
+{% if dish_list %}
+<table>
+    {% for dish in dish_list %}
+    <tr>
+    <th><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a></th>
+    <th><form method="post" >
+        {% csrf_token %}
+        <input type="submit" name = "{{ dish.id}}" value="Delete">
+    </form></th>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<h2>Add new dish</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Add">
+</form>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}RecipeHelper - {{ dish_name }}{% endblock %}
+
+{% block nav %}
+<nav>
+    <a href="{% url 'index' %}">Home.</a>
+    <a href="{% url 'ing_cat' %}">Ingridients</a>
+    <a href="{% url 'catalog' %}">Dishes</a>
+    <a>Help</a>
+</nav>
+{% endblock %}
+
+{% block content %}
+<h2>{{ dish_name }}</h2>
+<h3>Ingredients:</h3>
+{% if ingredients_list %}
+<ul id="inline">
+    {% for ing in ingredients_list %}
+        <li>
+            <form method="post" >
+                <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.ingredient.units }}
+                {% csrf_token %}
+                <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Add">
+</form>
+
+<p>{{dish_description}}</p>
+
+{% endblock %}
+</body>
+
+</html>

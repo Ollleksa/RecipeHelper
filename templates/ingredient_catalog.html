@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}RecipeHelper - Ingredients{% endblock %}
+
+{% block nav %}
+<nav>
+    <a href="{% url 'index' %}">Home.</a>
+    <a class="active" href="{% url 'ing_cat' %}">Ingridients</a>
+    <a href="{% url 'catalog' %}">Dishes</a>
+    <a>Help</a>
+</nav>
+{% endblock %}
+
+{% block content %}
+<h2>Ingredient catalog</h2>
+<h3>Ingredients:</h3>
+{% if ingredients_list %}
+<table>
+    {% for ing in ingredients_list %}
+    <tr>
+    <th>{{ ing.id }}</th>
+    <th><a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a></th>
+    <th><form method="post" >
+        {% csrf_token %}
+        <input type="submit" name = "{{ ing.id}}" value="Delete">
+    </form></th>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Add">
+</form>
+{% endblock %}

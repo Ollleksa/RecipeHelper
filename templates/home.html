@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}RecipeHelper - Catalog{% endblock %}
+
+{% block content %}
+<h2>Hi {{ user.username }}! Welcome back!</h2>
+
+<div class="wrapper">
+<div class="fridge">
+    <h3>It is your fridge:</h3>
+    {% if ing_list %}
+    <table>
+        {% for ing in ing_list %}
+        <tr>
+        <th>
+            <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a>
+        </th>
+        <th>
+            <form method="post" >
+                {% csrf_token %}
+                <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+            </form>
+        </th>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>You fridge is empty :(</p>
+    {% endif %}
+
+    <h2>Add new stock</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Add">
+    </form>
+</div>
+
+<div class="posibilities">
+    <h3>You can cook next:</h3>
+    {% if dish_list %}
+    <ul>
+        {% for dish in dish_list %}
+        <li><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>You had nothing to cook. Time for shopping?</p>
+    {% endif %}
+</div>
+</div>
+
+{% endblock %}
