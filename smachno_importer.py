@@ -5,10 +5,8 @@ from Picker.models import Dish, Recipe, Ingredient
 
 def get_site_content(url):
     r = requests.get(url)
-    text_n = r.text[r.text.find('<span itemprop="name">')+len('<span itemprop="name">'):]
-    for i in range(3):
-        text_n = text_n[text_n.find('<span itemprop="name">')+len('<span itemprop="name">'):]
-    name = text_n[:text_n.find('</span></span>')]
+    text_n = r.text[r.text.find('<title>')+len('<title>'):]
+    name = text_n[:text_n.find('</title>')]
     ing_str = '<table border="0" class="content_post_ingridients">'
     ing_position = text_n.find(ing_str) + len(ing_str)
     recipe_str = '<div class="kd-io-article-body"'
@@ -49,9 +47,9 @@ def ingredient_post_prod(str):
         pos1 = str.find('" i-amount="')
         pos2 = str.find('" i-measurement="')
         end = str.find('"><td')
-        name = str[pos:pos1]
         if end == -1 or pos == -1:
             break
+        name = str[pos:pos1]
         amount = str[pos1+len('" i-amount="'):pos2]
         units = str[pos2+len('" i-measurement="'):end]
         ingredients.append((name, amount, units))
@@ -61,7 +59,10 @@ def ingredient_post_prod(str):
 def db_writing(urls):
     for url in urls:
         (name, recipe, ingredients) = get_site_content(url)
+        print(name, recipe, ingredients)
         pk = new_dish(name, recipe)
+        print('$'*80)
+        print(pk)
         if pk == None:
             continue
         new_ingredients = add_ingredients(ingredients)
@@ -84,13 +85,12 @@ def add_ingredients(ingredients):
 def new_dish(name, recipe):
     try:
         get_dish = Dish.objects.get(name = name)
+        print(get_dish.pk)
         return None
     except Dish.DoesNotExist:
         new_dish = Dish(name = name, description = recipe)
         new_dish.save()
         return new_dish.pk
-    finally:
-        return None
 
 
 def connect_ing_dish(pk, ingredients):
