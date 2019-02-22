@@ -20,18 +20,22 @@
     <tr>
     <th>{{ ing.id }}</th>
     <th><a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a></th>
+    {% if user.is_staff %}
     <th><form method="post" >
         {% csrf_token %}
         <input type="submit" name = "{{ ing.id}}" value="Delete">
     </form></th>
+    {% endif %}
     </tr>
     {% endfor %}
 </table>
 {% endif %}
 
+{% if user.is_staff %}
 <form method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Add">
 </form>
+{% endif %}
 {% endblock %}

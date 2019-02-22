@@ -10,10 +10,6 @@ class Ingredient(models.Model):
     def __str__(self):
         return self.name
 
-def ingredient_for_choice():
-    d = [(ing.id, ing.name) for ing in Ingredient.objects.all()]
-    return d
-
 
 class Dish(models.Model):
     name = models.CharField(max_length = 100)

@@ -21,18 +21,20 @@
             <form method="post" >
                 <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.ingredient.units }}
                 {% csrf_token %}
-                <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+                {% if user.is_staff %}<input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">{% endif %}
             </form>
         </li>
     {% endfor %}
 </ul>
 {% endif %}
 
+{% if user.is_staff %}
 <form method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Add">
 </form>
+{% endif %}
 
 <p>{{dish_description}}</p>
 

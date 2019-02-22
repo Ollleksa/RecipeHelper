@@ -12,6 +12,15 @@
     <p>Best app for finding what to cook.</p>
 </header>
 
+<nav>
+{% if user.is_authenticated %}
+    <a href="{% url 'logout' %}">Log Out</a>
+{% else %}
+    <a href="{% url 'login' %}">Log In</a>
+    <a href="{% url 'signup' %}">Sign Up</a>
+{% endif %}
+</nav>
+
 {% block nav %}
 <nav>
     <a class="active" href="{% url 'index' %}">Home.</a>

@@ -1,0 +1,19 @@
+{% extends '../base.html' %}
+
+{% block title %}LogOut - Recipe Helper{% endblock %}
+
+{% block nav %}
+<nav>
+    <a href="{% url 'index' %}">Home.</a>
+    <a href="{% url 'ing_cat' %}">Ingridients</a>
+    <a class="active" href="{% url 'catalog' %}">Dishes</a>
+    <a>Help</a>
+</nav>
+{% endblock %}
+
+{% block content %}
+
+<p>You logged out!</p>
+<a href="{% url 'login' %}">Log in back!</a>
+
+{% endblock %}
