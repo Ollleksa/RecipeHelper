@@ -19,19 +19,23 @@
     {% for dish in dish_list %}
     <tr>
     <th><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a></th>
+    {% if user.is_staff %}
     <th><form method="post" >
         {% csrf_token %}
         <input type="submit" name = "{{ dish.id}}" value="Delete">
     </form></th>
+    {% endif %}
     </tr>
     {% endfor %}
 </table>
 {% endif %}
 
+{% if user.is_staff %}
 <h2>Add new dish</h2>
 <form method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Add">
 </form>
+{% endif %}
 {% endblock %}
