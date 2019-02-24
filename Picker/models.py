@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Ingredient(models.Model):
     name = models.CharField(max_length = 40, unique = True)
-    units = models.CharField(max_length = 10)
+    units = models.CharField(max_length = 10, default = 'g.')
     description = models.TextField(blank = True, default = '')
 
     def __str__(self):
