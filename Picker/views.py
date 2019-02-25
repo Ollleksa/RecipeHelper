@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse_lazy
 from django.db import models
+from django.core.paginator import Paginator
 
 from .models import Ingredient, Dish, Recipe, Fridge, recipe_finder
 from .forms import NewIngredient, NewDish, DishForm, AddIngredient
@@ -100,9 +101,14 @@ def recipe(request, dish_id):
 
 def catalog_ingredient(request):
     ing_list = Ingredient.objects.all()
+
+    paginator = Paginator(ing_list, 20)
+    page = request.GET.get('page')
+    product = paginator.get_page(page)
+
     if request.method == 'POST':
         is_deleted = False
-        for temp in ing_list:
+        for temp in product:
             if str(temp.id) in request.POST:
                 ing = Ingredient.objects.get(pk=temp.pk)
                 try:
@@ -120,19 +126,27 @@ def catalog_ingredient(request):
                 ing = Ingredient(name=form.cleaned_data['name'], units=form.cleaned_data['units'], description=form.cleaned_data['description'])
                 ing.save()
         ing_list = Ingredient.objects.all()
+        paginator = Paginator(ing_list, 20)
+        page = request.GET.get('page')
+        product = paginator.get_page(page)
     else:
         form=NewIngredient()
 
     template = loader.get_template('ingredient_catalog.html')
     context = {
-        'ingredients_list': ing_list,
         'form': form,
+        'product': product,
     }
     return HttpResponse(template.render(context, request))
 
 
 def catalog_recipe(request):
     dish_list = Dish.objects.all()
+
+    paginator = Paginator(dish_list, 20)
+    page = request.GET.get('page')
+    menu = paginator.get_page(page)
+
     if request.method == 'POST':
         is_deleted = False
         for temp in dish_list:
@@ -149,12 +163,15 @@ def catalog_recipe(request):
                 d.save()
                 return HttpResponseRedirect('{}'.format(d.id))
         dish_list = Dish.objects.all()
+        paginator = Paginator(dish_list, 20)
+        page = request.GET.get('page')
+        menu = paginator.get_page(page)
     else:
         form = NewDish()
 
     template = loader.get_template('catalog.html')
     context = {
-        'dish_list': dish_list,
+        'menu': menu,
         'form': form,
     }
     return HttpResponse(template.render(context, request))

@@ -1,5 +1,9 @@
-body {
+html, body {
     background-color: #ffcc99;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
 }
 
 header, footer {
