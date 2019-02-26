@@ -50,11 +50,6 @@
 {% endif %}
 
 {% if user.is_staff %}
-<h2>Add new dish</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Add">
-</form>
+<h3>Add new dish <a href="/recipe/create">here</a> </h3>
 {% endif %}
 {% endblock %}

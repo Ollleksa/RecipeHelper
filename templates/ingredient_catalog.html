@@ -43,7 +43,7 @@
     {% if user.is_staff %}
     <th><form method="post" >
         {% csrf_token %}
-        <input type="image" src="{% static 'delete_512.png' %}" name = "{{ ing.id}}" value="Delete">
+        <input type="image" src="{% static 'delete_512.png' %}" name = "{{ ing.id}}" value="Delete" title="Delete ingredient">
     </form></th>
     {% endif %}
     </tr>
@@ -52,10 +52,6 @@
 {% endif %}
 
 {% if user.is_staff %}
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Add">
-</form>
+<h3>Please click <a href="/ingredient/create">here</a> to create new ingredient.</h3>
 {% endif %}
 {% endblock %}

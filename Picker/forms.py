@@ -1,11 +1,12 @@
 from django import forms
 
-from .models import Dish, Ingredient
+from .models import Dish, Ingredient, Recipe
 
 class NewIngredient(forms.Form):
     name = forms.CharField(max_length = 40)
     units = forms.CharField(max_length=10)
-    description = forms.CharField()
+    description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}))
+
 
 class AddIngredient(forms.Form):
     choises = [tuple([x.id, x.name]) for x in Ingredient.objects.all()]
@@ -15,7 +16,7 @@ class AddIngredient(forms.Form):
 class NewDish(forms.Form):
     name = forms.CharField(max_length = 100)
     #ingredients = forms.MultipleChoiceField(models.ingredient_for_choice())
-    description = forms.CharField()
+    description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}))
 
 
 class DishForm(forms.Form):

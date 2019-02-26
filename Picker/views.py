@@ -4,6 +4,7 @@ from django.template import loader
 from django.urls import reverse_lazy
 from django.db import models
 from django.core.paginator import Paginator
+from django.core.exceptions import PermissionDenied
 
 from .models import Ingredient, Dish, Recipe, Fridge, recipe_finder
 from .forms import NewIngredient, NewDish, DishForm, AddIngredient
@@ -107,38 +108,42 @@ def catalog_ingredient(request):
     product = paginator.get_page(page)
 
     if request.method == 'POST':
-        is_deleted = False
         for temp in product:
             if str(temp.id) in request.POST:
                 ing = Ingredient.objects.get(pk=temp.pk)
                 try:
                     ing.delete()
-                    form = NewIngredient()
-                    is_deleted = True
                     break
                 except models.ProtectedError:
                     return ingredient_error(request, ing)
 
-
-        if not is_deleted:
-            form = NewIngredient(request.POST)
-            if form.is_valid():
-                ing = Ingredient(name=form.cleaned_data['name'], units=form.cleaned_data['units'], description=form.cleaned_data['description'])
-                ing.save()
         ing_list = Ingredient.objects.all()
         paginator = Paginator(ing_list, 20)
         page = request.GET.get('page')
         product = paginator.get_page(page)
-    else:
-        form=NewIngredient()
 
     template = loader.get_template('ingredient_catalog.html')
     context = {
-        'form': form,
         'product': product,
     }
     return HttpResponse(template.render(context, request))
 
+def create_ingredient(request):
+    if not request.user.is_staff:
+        raise PermissionDenied
+    if request.method == 'POST':
+        form = NewIngredient(request.POST)
+        if form.is_valid():
+            ing = Ingredient(name=form.cleaned_data['name'], units=form.cleaned_data['units'], description=form.cleaned_data['description'])
+            ing.save()
+    else:
+        form=NewIngredient()
+
+    template = loader.get_template('create_ingredient.html')
+    context = {
+        'form': form,
+    }
+    return HttpResponse(template.render(context, request))
 
 def catalog_recipe(request):
     dish_list = Dish.objects.all()
@@ -148,30 +153,36 @@ def catalog_recipe(request):
     menu = paginator.get_page(page)
 
     if request.method == 'POST':
-        is_deleted = False
         for temp in dish_list:
             if str(temp.id) in request.POST:
                 Dish.objects.filter(pk=temp.pk).delete()
-                form = NewDish()
-                is_deleted = True
                 break
 
-        if not is_deleted:
-            form = NewDish(request.POST)
-            if form.is_valid():
-                d = Dish(name = form.cleaned_data['name'], description = form.cleaned_data['description'])
-                d.save()
-                return HttpResponseRedirect('{}'.format(d.id))
         dish_list = Dish.objects.all()
         paginator = Paginator(dish_list, 20)
         page = request.GET.get('page')
         menu = paginator.get_page(page)
-    else:
-        form = NewDish()
 
     template = loader.get_template('catalog.html')
     context = {
         'menu': menu,
+    }
+    return HttpResponse(template.render(context, request))
+
+def create_dish(request):
+    if not request.user.is_staff:
+        raise PermissionDenied
+    if request.method == 'POST':
+        form = NewDish(request.POST)
+        if form.is_valid():
+            d = Dish(name=form.cleaned_data['name'], description=form.cleaned_data['description'])
+            d.save()
+            return HttpResponseRedirect('{}'.format(d.id))
+    else:
+        form=NewDish()
+
+    template = loader.get_template('create_dish.html')
+    context = {
         'form': form,
     }
     return HttpResponse(template.render(context, request))
