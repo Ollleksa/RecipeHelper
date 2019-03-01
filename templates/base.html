@@ -13,22 +13,23 @@
 </header>
 
 <nav>
+    <div class="navi">
+    {% block nav %}
+    <a class="active" href="{% url 'index' %}">Home.</a>
+    <a href="{% url 'ing_cat' %}">Ingridients</a>
+    <a href="{% url 'catalog' %}">Dishes</a>
+    <a>Help</a>
+    {% endblock %}
+    </div>
+    <div class="log">
 {% if user.is_authenticated %}
     <a href="{% url 'logout' %}">Log Out</a>
 {% else %}
     <a href="{% url 'login' %}">Log In</a>
     <a href="{% url 'signup' %}">Sign Up</a>
 {% endif %}
+    </div>
 </nav>
-
-{% block nav %}
-<nav>
-    <a class="active" href="{% url 'index' %}">Home.</a>
-    <a href="{% url 'ing_cat' %}">Ingridients</a>
-    <a href="{% url 'catalog' %}">Dishes</a>
-    <a>Help</a>
-</nav>
-{% endblock %}
 
 {% block content %}{% endblock %}
 

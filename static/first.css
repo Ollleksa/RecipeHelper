@@ -1,3 +1,4 @@
+/* all page */
 html, body {
     background-color: #ffcc99;
     margin: 0;
@@ -6,6 +7,7 @@ html, body {
     left: 0;
 }
 
+/* header and footer part */
 header, footer {
     text-align: center;
     padding: 10px 0px;
@@ -23,11 +25,20 @@ footer {
     background-color: mediumaquamarine;
 }
 
+/* navigation panel part */
 nav {
     width: 100%;
     background-color: #ffaa80;
+    /*background-color: #ffffff;8*/
     padding: 10px 0px;
     overflow: hidden;
+}
+
+nav div{
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
 }
 
 nav a {
@@ -38,7 +49,7 @@ nav a {
     font-size: 17px;
 }
 
-nav a:hover {
+nav a:hover{
     background-color: #ffff99;
     color: black;
 }
@@ -48,15 +59,45 @@ nav a.active {
     color: white;
 }
 
-span.email {
-    text-decoration: underline;
+nav div.log {
+    float: right;
 }
 
+/* links */
+a:link, a:visited {
+    text-decoration: none;
+    font-weight: bold;
+    color: #000033;
+}
+
+/* inline list
+doesnt worl */
+ul#inline li {
+    display: inline;
+}
+
+/* grid to fridge */
 .wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
 
-ul#inline li {
-    display: inline;
+/* choice picker */
+select {
+    background-color: #ffcc99;
+    font-weight: bold;
+}
+
+/* Button */
+.Submit {
+    color: black;
+    background-color: mediumaquamarine;
+    font-size: 1.2em;
+    border: 1px solid #ffffff;
+    padding: 0;
+}
+
+/* email part */
+span.email {
+    text-decoration: underline;
 }

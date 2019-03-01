@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}RecipeHelper - Catalog{% endblock %}
 
 {% block nav %}
-<nav>
     <a href="{% url 'index' %}">Home.</a>
     <a href="{% url 'ing_cat' %}">Ingridients</a>
     <a class="active" href="{% url 'catalog' %}">Dishes</a>
     <a>Help</a>
-</nav>
 {% endblock %}
 
 {% block content %}
@@ -41,7 +40,7 @@
     {% if user.is_staff %}
     <th><form method="post" >
         {% csrf_token %}
-        <input type="submit" name = "{{ dish.id}}" value="Delete">
+        <input type="image" src="{% static 'delete_512.png' %}" name = "{{ dish.id}}" value="Delete">
     </form></th>
     {% endif %}
     </tr>

@@ -12,42 +12,50 @@ from .forms import NewIngredient, NewDish, DishForm, AddIngredient
 
 def index(request):
     current_user = request.user
-    fridge_ing = Fridge.objects.filter(user_id = current_user.id, is_available = True).select_related('ingredient')
+    if current_user.is_authenticated:
+        fridge_ing = Fridge.objects.filter(user_id = current_user.id, is_available = True).select_related('ingredient')
 
-    if request.method == 'POST':
-        is_deleted = False
-        for temp in fridge_ing:
-            if str(temp.ingredient_id) in request.POST:
-                temp.is_available = False
-                temp.save()
-                form = AddIngredient()
-                is_deleted = True
-                break
+        if request.method == 'POST':
+            is_deleted = False
+            for temp in fridge_ing:
+                if str(temp.ingredient_id) in request.POST:
+                    temp.is_available = False
+                    temp.save()
+                    form = AddIngredient()
+                    is_deleted = True
+                    break
 
-        if not is_deleted:
-            form = AddIngredient(request.POST)
-            if form.is_valid():
-                ing_id = form.cleaned_data['ingredient']
-                try:
-                    k = Fridge.objects.get(user_id = current_user.id, ingredient_id = ing_id)
-                    k.is_available = True
-                    k.save()
-                except Fridge.DoesNotExist:
-                    k = Fridge(user_id = current_user.id, ingredient_id = ing_id)
-                    k.save()
+            if not is_deleted:
+                form = AddIngredient(request.POST)
+                if form.is_valid():
+                    ing_id = form.cleaned_data['ingredient']
+                    try:
+                        k = Fridge.objects.get(user_id = current_user.id, ingredient_id = ing_id)
+                        k.is_available = True
+                        k.save()
+                    except Fridge.DoesNotExist:
+                        k = Fridge(user_id = current_user.id, ingredient_id = ing_id)
+                        k.save()
 
-        fridge_ing = Fridge.objects.filter(user_id=current_user.id, is_available=True).select_related('ingredient')
+            fridge_ing = Fridge.objects.filter(user_id=current_user.id, is_available=True).select_related('ingredient')
+        else:
+            form = AddIngredient()
+
+        available_dish_id = recipe_finder(current_user)
+        dish_list = [Dish.objects.get(id=i['id']) for i in available_dish_id]
+        context = {
+            'user': current_user,
+            'ing_list': fridge_ing,
+            'dish_list': dish_list,
+            'form': form,
+        }
     else:
-        form = AddIngredient()
-
-    available_dish_id = recipe_finder(current_user)
-    dish_list = [Dish.objects.get(id=i['id']) for i in available_dish_id]
-    context = {
-        'user': current_user,
-        'ing_list': fridge_ing,
-        'dish_list': dish_list,
-        'form': form,
-    }
+        context = {
+            'user': current_user,
+            'ing_list': [],
+            'dish_list': [],
+            'form': [],
+        }
     template = loader.get_template('home.html')
     return HttpResponse(template.render(context, request))
 
@@ -89,19 +97,19 @@ def recipe(request, dish_id):
         ing_list = Recipe.objects.filter(dish_id=dish_id).select_related('ingredient')
     else:
         form = DishForm()
-
+    html_disctiption ='<ul><li>' + rec.description.replace('\n','</li><li>') + '</li></ul>'
     template = loader.get_template('dish.html')
     context = {
         'dish_name': rec.name,
         'ingredients_list': ing_list,
-        'dish_description': rec.description,
+        'dish_description': html_disctiption,
         'form': form,
     }
     return HttpResponse(template.render(context, request))
 
 
 def catalog_ingredient(request):
-    ing_list = Ingredient.objects.all()
+    ing_list = Ingredient.objects.all().order_by('id')
 
     paginator = Paginator(ing_list, 20)
     page = request.GET.get('page')
@@ -117,7 +125,7 @@ def catalog_ingredient(request):
                 except models.ProtectedError:
                     return ingredient_error(request, ing)
 
-        ing_list = Ingredient.objects.all()
+        ing_list = Ingredient.objects.all().order_by('id')
         paginator = Paginator(ing_list, 20)
         page = request.GET.get('page')
         product = paginator.get_page(page)
@@ -146,7 +154,7 @@ def create_ingredient(request):
     return HttpResponse(template.render(context, request))
 
 def catalog_recipe(request):
-    dish_list = Dish.objects.all()
+    dish_list = Dish.objects.all().order_by('id')
 
     paginator = Paginator(dish_list, 20)
     page = request.GET.get('page')
@@ -158,7 +166,7 @@ def catalog_recipe(request):
                 Dish.objects.filter(pk=temp.pk).delete()
                 break
 
-        dish_list = Dish.objects.all()
+        dish_list = Dish.objects.all().order_by('id')
         paginator = Paginator(dish_list, 20)
         page = request.GET.get('page')
         menu = paginator.get_page(page)
