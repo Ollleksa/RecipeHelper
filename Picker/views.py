@@ -6,7 +6,7 @@ from django.db import models
 from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied
 
-from .models import Ingredient, Dish, Recipe, Fridge, recipe_finder
+from .models import Ingredient, Dish, Recipe, Fridge, recipe_finder, recipe_finder_session
 from .forms import NewIngredient, NewDish, DishForm, AddIngredient
 
 
@@ -50,12 +50,41 @@ def index(request):
             'form': form,
         }
     else:
+        ing_re = request.session.get('ing_re', [])
+        request.session['ing_re'] = []
+        ing_list = [Ingredient.objects.get(id=i) for i in request.session['ing_re']]
+        if request.method == 'POST':
+            is_deleted = False
+            for temp in request.session['ing_re']:
+                if str(temp) in request.POST: #here problem with button
+                    print(temp)
+                    s = request.session['ing_re']
+                    s.remove(temp)
+                    print("Del", s)
+                    request.session['ing_re'] = s
+                    form = AddIngredient()
+                    is_deleted = True
+                    break
+
+            if not is_deleted:
+                form = AddIngredient(request.POST)
+                if form.is_valid():
+                    ing_id = form.cleaned_data['ingredient']
+                    request.session['ing_re'] = ing_re + [ing_id,]
+
+            ing_list = [Ingredient.objects.get(id=i) for i in request.session['ing_re']]
+        else:
+            form = AddIngredient()
+        print(ing_list)
+
+        dish_list = recipe_finder_session(request.session)
         context = {
-            'user': current_user,
-            'ing_list': [],
-            'dish_list': [],
-            'form': [],
+            'user': request.session,
+            'ing_list': ing_list,
+            'dish_list': dish_list,
+            'form': form,
         }
+
     template = loader.get_template('home.html')
     return HttpResponse(template.render(context, request))
 

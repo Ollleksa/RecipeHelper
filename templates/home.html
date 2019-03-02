@@ -4,7 +4,6 @@
 {% block title %}RecipeHelper - Catalog{% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
 <h2>Hi {{ user.username }}! Welcome back!</h2>
 
 <div class="wrapper">
@@ -13,6 +12,7 @@
     {% if ing_list %}
     <table>
         {% for ing in ing_list %}
+        {% if user.is_authenticated %}
         <tr>
         <th>
             <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a>
@@ -24,6 +24,19 @@
             </form>
         </th>
         </tr>
+        {% else %}
+        <tr>
+        <th>
+            <a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a>
+        </th>
+        <th>
+            <form method="post" >
+                {% csrf_token %}
+                <input type="image" src="{% static 'delete_512.png' %}" name = "{{ ing.id }}" value="Delete">
+            </form>
+        </th>
+        </tr>
+        {% endif %}
         {% endfor %}
     </table>
     {% else %}
@@ -51,11 +64,10 @@
     {% endif %}
 </div>
 </div>
-{% else %}
+
 <h2> Welcome to RecipeHelper!</h2>
 <p><em>Just imagine here pictures of most delicious dishes ever, because site is in development and I didnt manage to do it in time</em></p>
 <p>This application can help to answer the question "What should I cook when I had all only this stuff?</p>
 <p>So just sign up and start!</p>
-{% endif %}
 
 {% endblock %}

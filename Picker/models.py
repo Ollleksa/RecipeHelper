@@ -51,3 +51,9 @@ def recipe_finder(user):
     dishes = Dish.objects.filter(recipe__ingredient__fridge__user__id = user.id, recipe__ingredient__fridge__is_available = True).values('id')
     available_dish_id = dishes.difference(recipes)
     return available_dish_id
+
+def recipe_finder_session(session):
+    recipes = Recipe.objects.filter(ingredient__in=session['ing_re']).values('dish__id')
+    dishes = Dish.objects.filter(recipe__ingredient__in=session['ing_re']).values('id')
+    available_dish_id = dishes.difference(recipes)
+    return available_dish_id
