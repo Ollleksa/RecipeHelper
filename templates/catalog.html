@@ -40,7 +40,9 @@
     {% if user.is_staff %}
     <th><form method="post" >
         {% csrf_token %}
-        <input type="image" src="{% static 'delete_512.png' %}" name = "{{ dish.id}}" value="Delete">
+        <div class="delButton">
+            <input type="submit" name = "{{ dish.id}}" value="Delete">
+        </div>
     </form></th>
     {% endif %}
     </tr>

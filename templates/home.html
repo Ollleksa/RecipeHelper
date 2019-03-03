@@ -20,7 +20,9 @@
         <th>
             <form method="post" >
                 {% csrf_token %}
-                <input type="image" src="{% static 'delete_512.png' %}" name = "{{ ing.ingredient_id }}" value="Delete">
+                <div class="delButton">
+                    <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+                </div>
             </form>
         </th>
         </tr>
@@ -32,7 +34,9 @@
         <th>
             <form method="post" >
                 {% csrf_token %}
-                <input type="image" src="{% static 'delete_512.png' %}" name = "{{ ing.id }}" value="Delete">
+                <div class="delButton">
+                    <input type="submit" name = "{{ ing.id }}" value="Delete">
+                </div>
             </form>
         </th>
         </tr>

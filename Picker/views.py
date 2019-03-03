@@ -51,16 +51,14 @@ def index(request):
         }
     else:
         ing_re = request.session.get('ing_re', [])
-        request.session['ing_re'] = []
         ing_list = [Ingredient.objects.get(id=i) for i in request.session['ing_re']]
         if request.method == 'POST':
             is_deleted = False
             for temp in request.session['ing_re']:
-                if str(temp) in request.POST: #here problem with button
-                    print(temp)
+                if str(temp) in request.POST:
                     s = request.session['ing_re']
                     s.remove(temp)
-                    print("Del", s)
+                    print("Lefted", s)
                     request.session['ing_re'] = s
                     form = AddIngredient()
                     is_deleted = True
@@ -75,9 +73,10 @@ def index(request):
             ing_list = [Ingredient.objects.get(id=i) for i in request.session['ing_re']]
         else:
             form = AddIngredient()
-        print(ing_list)
+        #print(ing_list)
 
-        dish_list = recipe_finder_session(request.session)
+        dish_ids = recipe_finder_session(request.session)
+        dish_list = [Dish.objects.get(id=i['id']) for i in dish_ids]
         context = {
             'user': request.session,
             'ing_list': ing_list,

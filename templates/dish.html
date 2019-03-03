@@ -20,7 +20,11 @@
             <form method="post" >
                 <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.ingredient.units }}
                 {% csrf_token %}
-                {% if user.is_staff %}<input type="image" src="{% static 'delete_512.png' %}" name = "{{ ing.ingredient_id }}" value="Delete">{% endif %}
+                {% if user.is_staff %}
+                <div class="delButton">
+                    <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+                </div>
+                {% endif %}
             </form>
         </li>
     {% endfor %}

@@ -97,6 +97,14 @@ select {
     padding: 0;
 }
 
+div.delButton input {
+    color: transparent;
+    background: url(delete_512.png) no-repeat;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border: none;
+}
 /* email part */
 span.email {
     text-decoration: underline;

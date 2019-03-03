@@ -47,13 +47,15 @@ class Fridge(models.Model):
 
 
 def recipe_finder(user):
-    recipes = Recipe.objects.exclude(ingredient__fridge__user__id = user.id, ingredient__fridge__is_available = True).values('dish__id')
-    dishes = Dish.objects.filter(recipe__ingredient__fridge__user__id = user.id, recipe__ingredient__fridge__is_available = True).values('id')
+    recipes = Recipe.objects.exclude(
+        ingredient__in = Ingredient.objects.filter(fridge__user__id = user.id, fridge__is_available = True)
+    ).values('dish_id')
+    dishes = Dish.objects.all().values('id')
     available_dish_id = dishes.difference(recipes)
     return available_dish_id
 
 def recipe_finder_session(session):
-    recipes = Recipe.objects.filter(ingredient__in=session['ing_re']).values('dish__id')
-    dishes = Dish.objects.filter(recipe__ingredient__in=session['ing_re']).values('id')
+    recipes = Recipe.objects.exclude(ingredient__in=session['ing_re']).values('dish__id')
+    dishes = Dish.objects.all().values('id')
     available_dish_id = dishes.difference(recipes)
     return available_dish_id
