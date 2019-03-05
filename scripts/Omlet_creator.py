@@ -7,6 +7,10 @@ for ing in START_INGREDIENT:
     S_ID.append(new_ing.pk)
 
 def start(file):
+    """
+    Main function
+    :param file: File with ingredient list
+    """
     with open(file) as f:
         ing = f.readlines()
 
@@ -19,6 +23,7 @@ def start(file):
                 db_writing([i, j])
 
 def db_writing(ingredients):
+    """Create Dish and Recipes for it"""
     if len(ingredients) == 1:
         name = 'Яєчня з {}'.format(ingredients[0])
     else:
@@ -28,12 +33,22 @@ def db_writing(ingredients):
     connect_ing_dish(pk, ingredients)
 
 def new_dish(name):
+    """
+    Dish creating without description.
+    :param name: Name of dish
+    :return: Primary Key of created dish
+    """
     new_dish = Dish(name = name
     new_dish.save()
     return new_dish.pk
 
 
 def connect_ing_dish(pk, ingredients):
+    """
+    Creating Recipe model instances.
+    :param pk: Primary key of Dish
+    :param ingredients: names of ingredients in recipe
+    """
     for i in S_ID:
         new = Recipe(dish_id=pk, ingredient_id=i, amount=200)
         new.save()
@@ -43,6 +58,7 @@ def connect_ing_dish(pk, ingredients):
         new.save()
 
 def env_prep():
+    """All import for script"""
     Recipe.objects.all().delete()
     Ingredient.objects.all().delete()
     Dish.objects.all.delete()

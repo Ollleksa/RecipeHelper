@@ -11,11 +11,18 @@ from .forms import NewIngredient, NewDish, DishForm, AddIngredient
 
 
 def index(request):
+    """
+    Creation view for home page.
+    :param request: Django request
+    :return: Django HttpResponse.
+    """
     current_user = request.user
     if current_user.is_authenticated:
+        # get ingredients from users fridge for creating view
         fridge_ing = Fridge.objects.filter(user_id = current_user.id, is_available = True).select_related('ingredient')
 
         if request.method == 'POST':
+            # check for POST called from deletion. Post send ingredient_id in name
             is_deleted = False
             for temp in fridge_ing:
                 if str(temp.ingredient_id) in request.POST:
@@ -25,6 +32,7 @@ def index(request):
                     is_deleted = True
                     break
 
+            # else check for submitting new ingredient for fridge
             if not is_deleted:
                 form = AddIngredient(request.POST)
                 if form.is_valid():
@@ -37,6 +45,7 @@ def index(request):
                         k = Fridge(user_id = current_user.id, ingredient_id = ing_id)
                         k.save()
 
+            # calls one more time for updating ingredient list
             fridge_ing = Fridge.objects.filter(user_id=current_user.id, is_available=True).select_related('ingredient')
         else:
             form = AddIngredient()
@@ -49,8 +58,8 @@ def index(request):
             'dish_list': dish_list,
             'form': form,
         }
-    else:
-        ing_re = request.session.get('ing_re', [])
+    else: #for anonymous user (Logic same as above)
+        ing_re = request.session.setdefault('ing_re', [])
         ing_list = [Ingredient.objects.get(id=i) for i in request.session['ing_re']]
         if request.method == 'POST':
             is_deleted = False
@@ -67,13 +76,12 @@ def index(request):
             if not is_deleted:
                 form = AddIngredient(request.POST)
                 if form.is_valid():
-                    ing_id = form.cleaned_data['ingredient']
+                    ing_id = form.cleaned_data['ingredient'].id
                     request.session['ing_re'] = ing_re + [ing_id,]
 
             ing_list = [Ingredient.objects.get(id=i) for i in request.session['ing_re']]
         else:
             form = AddIngredient()
-        #print(ing_list)
 
         dish_ids = recipe_finder_session(request.session)
         dish_list = [Dish.objects.get(id=i['id']) for i in dish_ids]
@@ -89,6 +97,12 @@ def index(request):
 
 
 def ing(request, ingredient_id):
+    """
+    View for single ingredient.
+    :param request: Django request
+    :param ingredient_id: pk of ingredient
+    :return: Django HttpResponse
+    """
     try:
         ingerdient = Ingredient.objects.get(pk=ingredient_id)
     except Ingredient.DoesNotExist:
@@ -101,13 +115,21 @@ def ing(request, ingredient_id):
 
 
 def recipe(request, dish_id):
+    """
+    View for single dish. Use forms for configuring ingredients.
+    :param request: Django request
+    :param dish_id: pk of dish
+    :return: Django HttpResponse
+    """
     try:
         rec = Dish.objects.get(pk=dish_id)
     except Dish.DoesNotExist:
         raise Http404("There is no such recipe.")
 
+    # ingredients list for dish, use Recipe model
     ing_list = Recipe.objects.filter(dish_id=dish_id).select_related('ingredient')
     if request.method == 'POST':
+        # check for POST called from deletion. Post send ingredient_id in name
         is_deleted = False
         for temp in ing_list:
             if str(temp.ingredient_id) in request.POST:
@@ -116,15 +138,18 @@ def recipe(request, dish_id):
                 is_deleted = True
                 break
 
+        # Add new ingredients to recipe
         if not is_deleted:
             form = DishForm(request.POST)
             if form.is_valid():
-                ing2rec = Recipe(dish_id = dish_id, ingredient_id = form.cleaned_data['ingredient'],
+                ing2rec = Recipe(dish_id = dish_id, ingredient_id = form.cleaned_data['ingredient'].id,
                                  amount=form.cleaned_data['amount'])
                 ing2rec.save()
         ing_list = Recipe.objects.filter(dish_id=dish_id).select_related('ingredient')
     else:
         form = DishForm()
+
+    # Formating description. \n -> list_item
     html_disctiption ='<ul><li>' + rec.description.replace('\n','</li><li>') + '</li></ul>'
     template = loader.get_template('dish.html')
     context = {
@@ -137,8 +162,14 @@ def recipe(request, dish_id):
 
 
 def catalog_ingredient(request):
+    """
+    View for ingredient catalog
+    :param request: Django request
+    :return: HttpResponse
+    """
     ing_list = Ingredient.objects.all().order_by('id')
 
+    # Django paginator (Maybe use direct request to DB?)
     paginator = Paginator(ing_list, 20)
     page = request.GET.get('page')
     product = paginator.get_page(page)
@@ -151,6 +182,7 @@ def catalog_ingredient(request):
                     ing.delete()
                     break
                 except models.ProtectedError:
+                    # error page
                     return ingredient_error(request, ing)
 
         ing_list = Ingredient.objects.all().order_by('id')
@@ -165,12 +197,18 @@ def catalog_ingredient(request):
     return HttpResponse(template.render(context, request))
 
 def create_ingredient(request):
+    """
+    View for creation ingredients
+    :param request: Django request
+    :return: HttpResponse
+    """
     if not request.user.is_staff:
         raise PermissionDenied
     if request.method == 'POST':
         form = NewIngredient(request.POST)
         if form.is_valid():
-            ing = Ingredient(name=form.cleaned_data['name'], units=form.cleaned_data['units'], description=form.cleaned_data['description'])
+            ing = Ingredient(name=form.cleaned_data['name'], units=form.cleaned_data['units'],
+                             description=form.cleaned_data['description'])
             ing.save()
     else:
         form=NewIngredient()
@@ -182,6 +220,11 @@ def create_ingredient(request):
     return HttpResponse(template.render(context, request))
 
 def catalog_recipe(request):
+    """
+    View for dish catalog
+    :param request: Django request
+    :return: HttpResponse
+    """
     dish_list = Dish.objects.all().order_by('id')
 
     paginator = Paginator(dish_list, 20)
@@ -206,6 +249,11 @@ def catalog_recipe(request):
     return HttpResponse(template.render(context, request))
 
 def create_dish(request):
+    """
+    View page for Dish creation. Ingredients adds after creation.
+    :param request: Django request
+    :return: HttpResponse
+    """
     if not request.user.is_staff:
         raise PermissionDenied
     if request.method == 'POST':
@@ -224,6 +272,12 @@ def create_dish(request):
     return HttpResponse(template.render(context, request))
 
 def ingredient_error(request, ing):
+    """
+    Error page if somebody want to delete ingredient in use.
+    :param request: Django request
+    :param ing: ingredient what was deleted
+    :return: HttpResponse
+    """
     ingredient_name = ing.name
     recipes_list = Recipe.objects.filter(ingredient=ing.id)
     template = loader.get_template('delete_error.html')
