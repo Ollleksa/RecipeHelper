@@ -3,8 +3,11 @@ from django.contrib.auth.models import User
 
 
 class Ingredient(models.Model):
+    """
+    Model for Ingredient
+    """
     name = models.CharField(max_length = 40, unique = True)
-    units = models.CharField(max_length = 10)
+    units = models.CharField(max_length = 10, default = 'g.')
     description = models.TextField(blank = True, default = '')
 
     def __str__(self):
@@ -12,6 +15,9 @@ class Ingredient(models.Model):
 
 
 class Dish(models.Model):
+    """
+    Model for Dish. Ingredients not included because of 3NF, they included in 'Recipe' model.
+    """
     name = models.CharField(max_length = 100)
     description = models.TextField(blank=True, default='')
 
@@ -20,6 +26,10 @@ class Dish(models.Model):
 
 
 class Recipe(models.Model):
+    """
+    Model for connecting Dishes and Ingredients. Use two foreign keys to bind itself to instances.
+    Ingredient include in Dish only once.
+    """
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits = 10, decimal_places = 1, null = True)
@@ -33,6 +43,10 @@ class Recipe(models.Model):
 
 
 class Fridge(models.Model):
+    """
+    Model for user's fridge. Connect user with his ingredients.
+    is_available is used to not generate high PrimaryKey and reuse DB instance.
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     is_available = models.BooleanField(default = True)
@@ -47,7 +61,29 @@ class Fridge(models.Model):
 
 
 def recipe_finder(user):
-    recipes = Recipe.objects.exclude(ingredient__fridge__user__id = user.id, ingredient__fridge__is_available = True).values('dish__id')
-    dishes = Dish.objects.filter(recipe__ingredient__fridge__user__id = user.id, recipe__ingredient__fridge__is_available = True).values('id')
+    """
+    Find available recipes for user. Get his fridge from DB.
+    :param user: Django user model.
+    :return: id-s of available dishes
+
+    Logic: found all dishes that have ingredients which are not in user's fridge. Then subtract it from all dishes.
+    """
+    recipes = Recipe.objects.exclude(
+        ingredient__in = Ingredient.objects.filter(fridge__user__id = user.id, fridge__is_available = True)
+    ).values('dish_id')
+    dishes = Dish.objects.all().values('id')
+    available_dish_id = dishes.difference(recipes)
+    return available_dish_id
+
+def recipe_finder_session(session):
+    """
+    Find available recipes with ingredients added in current session.
+    :param session: Django session with ingredients id in attribute 'ing_re'
+    :return:  id-s of available dishes
+
+    Logic: found all dishes that have ingredients which are not in user's fridge. Then subtract it from all dishes.
+    """
+    recipes = Recipe.objects.exclude(ingredient__in=session['ing_re']).values('dish__id')
+    dishes = Dish.objects.all().values('id')
     available_dish_id = dishes.difference(recipes)
     return available_dish_id

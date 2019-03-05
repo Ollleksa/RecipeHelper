@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}RecipeHelper - {{ dish_name }}{% endblock %}
 
 {% block nav %}
-<nav>
     <a href="{% url 'index' %}">Home.</a>
     <a href="{% url 'ing_cat' %}">Ingridients</a>
     <a href="{% url 'catalog' %}">Dishes</a>
     <a>Help</a>
-</nav>
 {% endblock %}
 
 {% block content %}
@@ -21,7 +20,11 @@
             <form method="post" >
                 <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.ingredient.units }}
                 {% csrf_token %}
-                {% if user.is_staff %}<input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">{% endif %}
+                {% if user.is_staff %}
+                <div class="delButton">
+                    <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+                </div>
+                {% endif %}
             </form>
         </li>
     {% endfor %}
@@ -36,7 +39,7 @@
 </form>
 {% endif %}
 
-<p>{{dish_description}}</p>
+<p>{% autoescape off %}{{dish_description}}{% endautoescape %}</p>
 
 {% endblock %}
 </body>

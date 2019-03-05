@@ -1,17 +1,29 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}RecipeHelper - Catalog{% endblock %}
 
 {% block content %}
+
+<div class="welcome">
 {% if user.is_authenticated %}
 <h2>Hi {{ user.username }}! Welcome back!</h2>
+{% else %}
+<h2> Welcome to RecipeHelper!</h2>
+<p><em>Just imagine here pictures of most delicious dishes ever, because site is in development and I didnt manage to do it in time</em></p>
+<p>This application can help to answer the question "What should I cook when I had all only this stuff?</p>
+<p>Just add some ingredients to your fridge and start.</p>
+{% endif %}
+</div>
+<hr>
 
 <div class="wrapper">
 <div class="fridge">
-    <h3>It is your fridge:</h3>
+    <h2>It is your fridge:</h2>
     {% if ing_list %}
     <table>
         {% for ing in ing_list %}
+        {% if user.is_authenticated %}
         <tr>
         <th>
             <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a>
@@ -19,10 +31,27 @@
         <th>
             <form method="post" >
                 {% csrf_token %}
-                <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+                <div class="delButton">
+                    <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+                </div>
             </form>
         </th>
         </tr>
+        {% else %}
+        <tr>
+        <th>
+            <a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a>
+        </th>
+        <th>
+            <form method="post" >
+                {% csrf_token %}
+                <div class="delButton">
+                    <input type="submit" name = "{{ ing.id }}" value="Delete">
+                </div>
+            </form>
+        </th>
+        </tr>
+        {% endif %}
         {% endfor %}
     </table>
     {% else %}
@@ -33,7 +62,7 @@
     <form method="post">
         {% csrf_token %}
         {{ form }}
-        <input type="submit" value="Add">
+        <input type="submit" value="Add" class="Submit">
     </form>
 </div>
 
@@ -50,11 +79,5 @@
     {% endif %}
 </div>
 </div>
-{% else %}
-<h2> Welcome to RecipeHelper!</h2>
-<p><em>Just imagine here pictures of most delicious dishes ever, because site is in development and I didnt manage to do it in time</em></p>
-<p>This application can help to answer the question "What should I cook when I had all only this stuff?</p>
-<p>So just sign up and start!</p>
-{% endif %}
 
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}RecipeHelper - {{ ing_name }}{% endblock %}
+{% block title %}RecipeHelper - Catalog{% endblock %}
 
 {% block nav %}
     <a href="{% url 'index' %}">Home.</a>
@@ -10,6 +10,10 @@
 {% endblock %}
 
 {% block content %}
-<h2>{{ ing_name }}</h2>
-<p>{{ing_description}}</p>
+<h2>Add new dish</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Add">
+</form>
 {% endblock %}
