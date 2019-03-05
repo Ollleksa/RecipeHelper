@@ -39,6 +39,7 @@ nav div{
     margin: 0;
     top: 0;
     left: 0;
+    display: inline;
 }
 
 nav a {
@@ -94,7 +95,7 @@ select {
     background-color: mediumaquamarine;
     font-size: 1.2em;
     border: 1px solid #ffffff;
-    padding: 0;
+    padding: 6px;
 }
 
 div.delButton input {
