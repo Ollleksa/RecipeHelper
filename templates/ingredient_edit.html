@@ -3,17 +3,16 @@
 {% block title %}RecipeHelper - {{ ing_name }}{% endblock %}
 
 {% block nav %}
-    <a href="{% url 'index' %}">Home.</a>
+    <a href="{% url 'index' %}">Home</a>
     <a href="{% url 'ing_cat' %}">Ingridients</a>
     <a href="{% url 'catalog' %}">Dishes</a>
     <a>Help</a>
 {% endblock %}
 
-{% block admin %}
-<a href="?edit_mode=True">Edit Ingredient</a>
-{% endblock %}
-
 {% block content %}
-<h2>{{ ing_name }}</h2>
-<p>{{ing_description}}</p>
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Update">
+</form>
 {% endblock %}

@@ -10,6 +10,10 @@
     <a>Help</a>
 {% endblock %}
 
+{% block admin %}
+<a href="?edit_mode=True">Edit Recipe</a>
+{% endblock %}
+
 {% block content %}
 <h2>{{ dish_name }}</h2>
 <h3>Ingredients:</h3>

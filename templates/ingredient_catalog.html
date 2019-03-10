@@ -10,6 +10,11 @@
     <a>Help</a>
 {% endblock %}
 
+{% block admin %}
+<a href="/ingredient/create">Create New Ingredient</a>
+<a href="?edit_mode=True">Delete/Edit Ingredient</a>
+{% endblock %}
+
 {% block content %}
 <h2>Ingredient catalog</h2>
 
@@ -39,12 +44,20 @@
     <th>{{ ing.id }}</th>
     <th><a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a></th>
     {% if user.is_staff %}
+    {% if edit %}
     <th><form method="post" >
         {% csrf_token %}
         <div class="delButton">
-                    <input type="submit" name = "{{ ing.id}}" value="Delete" title="Delete ingredient">
+                    <input type="submit" name = "Delete {{ing.id}}" value="Delete" title="Delete ingredient">
         </div>
     </form></th>
+    <th><form method="post" >
+        {% csrf_token %}
+        <div class="editButton">
+                    <input type="submit" name = "Edit {{ing.id}}" value="Edit" title="Edit ingredient">
+        </div>
+    </form></th>
+    {% endif %}
     {% endif %}
     </tr>
     {% endfor %}

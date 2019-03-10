@@ -6,6 +6,7 @@
 {% block content %}
 
 <div class="welcome">
+
 {% if user.is_authenticated %}
 <h2>Hi {{ user.username }}! Welcome back!</h2>
 {% else %}

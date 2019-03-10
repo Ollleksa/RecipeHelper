@@ -7,7 +7,7 @@ from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied
 
 from .models import Ingredient, Dish, Recipe, Fridge, recipe_finder, recipe_finder_session
-from .forms import NewIngredient, NewDish, DishForm, AddIngredient
+from .forms import NewIngredient, NewDish, DishForm, AddIngredient, EditIngredient
 
 
 def index(request):
@@ -16,6 +16,9 @@ def index(request):
     :param request: Django request
     :return: Django HttpResponse.
     """
+
+    edit = request.GET.get('edit_mode')
+
     current_user = request.user
     if current_user.is_authenticated:
         # get ingredients from users fridge for creating view
@@ -93,6 +96,10 @@ def index(request):
         }
 
     template = loader.get_template('home.html')
+    if edit:
+        print('Get')
+        template = loader.get_template('base.html')
+
     return HttpResponse(template.render(context, request))
 
 
@@ -104,14 +111,35 @@ def ing(request, ingredient_id):
     :return: Django HttpResponse
     """
     try:
-        ingerdient = Ingredient.objects.get(pk=ingredient_id)
+        ingredient = Ingredient.objects.get(pk=ingredient_id)
     except Ingredient.DoesNotExist:
         raise Http404("There is no such ingredient.")
+
+    edit = request.GET.get('edit_mode')
+
     context = {
-        'ing_name': ingerdient.name,
-        'ing_description': ingerdient.description,
+        'ing_name': ingredient.name,
+        'ing_description': ingredient.description,
     }
-    return render(request, 'ingredient.html', context)
+
+    if edit:
+        template = loader.get_template('ingredient_edit.html')
+        data = {'name': ingredient.name, 'units': ingredient.units, 'description': ingredient.description}
+        form = EditIngredient(data)
+        if request.method == 'POST':
+            form = EditIngredient(request.POST)
+            if form.is_valid():
+                ingredient.name = form.cleaned_data['name']
+                ingredient.units = form.cleaned_data['units']
+                ingredient.description = form.cleaned_data['description']
+                ingredient.save()
+                print('Updated.')
+                return HttpResponseRedirect('../{}'.format(ingredient.id))
+        context['form'] = form
+    else:
+        template = loader.get_template('ingredient.html')
+
+    return HttpResponse(template.render(context, request))
 
 
 def recipe(request, dish_id):
@@ -174,16 +202,23 @@ def catalog_ingredient(request):
     page = request.GET.get('page')
     product = paginator.get_page(page)
 
-    if request.method == 'POST':
+    #edit mode
+    edit = request.GET.get('edit_mode')
+
+    if edit and request.method == 'POST':
         for temp in product:
-            if str(temp.id) in request.POST:
-                ing = Ingredient.objects.get(pk=temp.pk)
+            if ('Delete ' + str(temp.id)) in request.POST:
+                ingredient = Ingredient.objects.get(pk=temp.pk)
                 try:
-                    ing.delete()
+                    ingredient.delete()
                     break
                 except models.ProtectedError:
                     # error page
                     return ingredient_error(request, ing)
+
+            if ('Edit ' + str(temp.id)) in request.POST:
+                ingredient = Ingredient.objects.get(pk=temp.pk)
+                return HttpResponseRedirect('{}?edit_mode=True'.format(ingredient.id))
 
         ing_list = Ingredient.objects.all().order_by('id')
         paginator = Paginator(ing_list, 20)
@@ -193,6 +228,7 @@ def catalog_ingredient(request):
     template = loader.get_template('ingredient_catalog.html')
     context = {
         'product': product,
+        'edit': edit,
     }
     return HttpResponse(template.render(context, request))
 

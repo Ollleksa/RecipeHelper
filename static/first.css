@@ -7,6 +7,11 @@ html, body {
     left: 0;
 }
 
+/*background
+body div.welcome {
+    background: url(home_background.jpg) repeat-y;
+}*/
+
 /* header and footer part */
 header, footer {
     text-align: center;
@@ -31,6 +36,16 @@ nav {
     background-color: #ffaa80;
     /*background-color: #ffffff;8*/
     padding: 10px 0px;
+    overflow: hidden;
+}
+
+/*administration panel */
+nav.edit {
+    text-size: 0.5em;
+    font-style: italic;
+    width: 100%;
+    background-color: #ffaa80;
+    padding: 0px 0px;
     overflow: hidden;
 }
 
@@ -68,6 +83,12 @@ nav div.log {
 a:link, a:visited {
     text-decoration: none;
     font-weight: bold;
+    color: #000033;
+}
+
+nav.edit a:link, nav.edit a:visited {
+    text-decoration: underline;
+    font-weight: normal;
     color: #000033;
 }
 

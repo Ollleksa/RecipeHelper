@@ -10,6 +10,11 @@
     <a>Help</a>
 {% endblock %}
 
+{% block admin %}
+<a href="/recipe/create">Create New Recipe</a>
+<a href="?edit_mode=True">Delete/Edit Recipe</a>
+{% endblock %}
+
 {% block content %}
 <h2>Recepy catalog</h2>
 

@@ -12,6 +12,15 @@ class NewIngredient(forms.Form):
     description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}))
 
 
+class EditIngredient(forms.Form):
+    """
+    Form for editing Ingredient after creation.
+    """
+    name = forms.CharField(max_length = 40)
+    units = forms.CharField(max_length=10)
+    description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}), required = False)
+
+
 class AddIngredient(forms.Form):
     """
     Form for adding ingredient to you fridge on main page
