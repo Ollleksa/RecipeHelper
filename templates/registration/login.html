@@ -3,12 +3,10 @@
 {% block title %}LogIn - Recipe Helper{% endblock %}
 
 {% block nav %}
-<nav>
-    <a href="{% url 'index' %}">Home.</a>
+    <a href="{% url 'index' %}">Home</a>
     <a href="{% url 'ing_cat' %}">Ingridients</a>
-    <a class="active" href="{% url 'catalog' %}">Dishes</a>
-    <a>Help</a>
-</nav>
+    <a href="{% url 'catalog' %}">Dishes</a>
+    <a href="{% url 'help' %}">Help</a>
 {% endblock %}
 
 {% block content %}

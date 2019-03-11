@@ -39,7 +39,7 @@ def index(request):
             if not is_deleted:
                 form = AddIngredient(request.POST)
                 if form.is_valid():
-                    ing_id = form.cleaned_data['ingredient']
+                    ing_id = form.cleaned_data['ingredient'].id
                     try:
                         k = Fridge.objects.get(user_id = current_user.id, ingredient_id = ing_id)
                         k.is_available = True
@@ -375,4 +375,14 @@ def ingredient_error(request, ing):
         "recipes_list": recipes_list,
 
     }
+    return HttpResponse(template.render(context,request))
+
+def help_page(request):
+    """
+    Help page with information
+    :param request: Django request
+    :return: HttpResponse
+    """
+    template = loader.get_template('help.html')
+    context = {}
     return HttpResponse(template.render(context,request))

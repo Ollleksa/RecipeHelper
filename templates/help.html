@@ -3,13 +3,37 @@
 
 {% block title %}RecipeHelper - Catalog{% endblock %}
 
-{% block content %}
+{% block nav %}
+    <a href="{% url 'index' %}">Home</a>
+    <a href="{% url 'ing_cat' %}">Ingridients</a>
+    <a href="{% url 'catalog' %}">Dishes</a>
+    <a class="active" href="{% url 'help' %}">Help</a>
+{% endblock %}
 
+
+{% block content %}
 <div class="welcome">
 <h2> Welcome to RecipeHelper!</h2>
-<p>This is application </p>
-<p>Just add some ingredients to your fridge and start.</p>
+<p>This is application for finding what to cook. You can add Ingredients, that you have, and app return you list of
+dishes you can cook. Just so easy.</p>
 </div>
 <hr>
 
+<h2>Step-by-step instruction</h2>
+<ol>
+    <li>
+        Firstly add some ingredient to you fridge. Under "Add new stock", you can pick ingredient you want and click
+        button "Add"
+        <img src="../static/Tutorial_1.png" alt="Tutorial screen one." style="border:5px solid white">
+    </li>
+    <li>
+        After you choose enough ingredients, for example "Oatmeal" and "Milk", system show you recipes at the right of
+        screen. This is all.
+        <img src="../static/Tutorial_2.png" alt="Tutorial screen two." style="border:5px solid white">
+    </li>
+    <li>
+        Registered user's fridge will be saved for the next time, so you do not need to worry about adding many
+        ingredients each time.
+    </li>
+</ol>
 {% endblock %}

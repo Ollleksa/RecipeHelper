@@ -20,8 +20,8 @@
 
 <div class="wrapper">
 <div class="fridge">
-    <h2>It is your fridge:</h2>
     {% if ing_list %}
+    <h2>It is your fridge:</h2>
     <table>
         {% for ing in ing_list %}
         {% if user.is_authenticated %}
@@ -56,10 +56,10 @@
         {% endfor %}
     </table>
     {% else %}
-    <p>You fridge is empty :(</p>
+    <h2>You fridge is empty :(</h2>
     {% endif %}
 
-    <h2>Add new stock</h2>
+    <h2>Add new ingredients to you fridge:</h2>
     <form method="post">
         {% csrf_token %}
         {{ form }}
@@ -68,15 +68,15 @@
 </div>
 
 <div class="posibilities">
-    <h3>You can cook next:</h3>
     {% if dish_list %}
+    <h3>You can cook next:</h3>
     <ul>
         {% for dish in dish_list %}
         <li><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a>
         {% endfor %}
     </ul>
     {% else %}
-    <p>You had nothing to cook. Time for shopping?</p>
+    <h3>You had nothing to cook. Time for shopping?</h3>
     {% endif %}
 </div>
 </div>

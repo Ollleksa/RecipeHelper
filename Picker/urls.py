@@ -10,4 +10,5 @@ urlpatterns = [
     path('recipe/<int:dish_id>/', views.recipe, name='recipe'), #single dish page
     path('recipe/', views.catalog_recipe, name='catalog'), #catalog of recipes
     path('recipe/create', views.create_dish, name='dish_create'), #recipe creation page
+    path('help/', views.help_page, name='help'), #help page
 ]

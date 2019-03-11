@@ -4,10 +4,10 @@
 {% block title %}RecipeHelper - Catalog{% endblock %}
 
 {% block nav %}
-    <a href="{% url 'index' %}">Home.</a>
+    <a href="{% url 'index' %}">Home</a>
     <a href="{% url 'ing_cat' %}">Ingridients</a>
     <a class="active" href="{% url 'catalog' %}">Dishes</a>
-    <a>Help</a>
+    <a href="{% url 'help' %}">Help</a>
 {% endblock %}
 
 {% block admin %}
@@ -16,6 +16,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="center">
 <h2>Recepy catalog</h2>
 
 <div class="pagination">
@@ -38,7 +39,7 @@
 
 <h3>Dishes:</h3>
 {% if menu %}
-<table>
+<table class="center">
     {% for dish in menu %}
     <tr>
     <th><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a></th>
@@ -66,4 +67,5 @@
 {% if user.is_staff %}
 <h3>Add new dish <a href="/recipe/create">here</a> </h3>
 {% endif %}
+</div>
 {% endblock %}

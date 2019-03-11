@@ -29,7 +29,9 @@ footer {
     color: black;
     background-color: mediumaquamarine;
 }
-
+footer p {
+    margin: 0.4em;
+}
 /* navigation panel part */
 nav {
     width: 100%;
@@ -104,6 +106,17 @@ ul#inline li {
     grid-template-columns: 1fr 1fr;
 }
 
+/* center */
+.center {
+    text-align: center;
+}
+
+table.center {
+    margin-left: auto;
+    margin-right: auto;
+    float: center;
+}
+
 /* choice picker */
 select {
     background-color: #ffcc99;
@@ -119,14 +132,15 @@ select {
     padding: 6px;
 }
 
-div.delButton input {
+/*div.delButton input {
     color: transparent;
     background: url(delete_512.png) no-repeat;
     cursor: pointer;
     width: 32px;
     height: 32px;
     border: none;
-}
+}*/
+
 /* email part */
 span.email {
     text-decoration: underline;
