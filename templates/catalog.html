@@ -12,7 +12,7 @@
 
 {% block admin %}
 <a href="/recipe/create">Create New Recipe</a>
-<a href="?edit_mode=True">Delete/Edit Recipe</a>
+<a href="?page={{menu.number}}&edit_mode=True">Delete/Edit Recipes</a>
 {% endblock %}
 
 {% block content %}
@@ -43,12 +43,20 @@
     <tr>
     <th><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a></th>
     {% if user.is_staff %}
+    {% if edit %}
     <th><form method="post" >
         {% csrf_token %}
         <div class="delButton">
-            <input type="submit" name = "{{ dish.id}}" value="Delete">
+            <input type="submit" name = "Delete {{dish.id}}" value="Delete">
         </div>
     </form></th>
+    <th><form method="post" >
+        {% csrf_token %}
+        <div class="editButton">
+            <input type="submit" name = "Edit {{dish.id}}" value="Edit">
+        </div>
+    </form></th>
+    {% endif %}
     {% endif %}
     </tr>
     {% endfor %}

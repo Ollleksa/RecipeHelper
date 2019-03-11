@@ -154,38 +154,54 @@ def recipe(request, dish_id):
     except Dish.DoesNotExist:
         raise Http404("There is no such recipe.")
 
+    edit = request.GET.get('edit_mode')
+
     # ingredients list for dish, use Recipe model
     ing_list = Recipe.objects.filter(dish_id=dish_id).select_related('ingredient')
-    if request.method == 'POST':
-        # check for POST called from deletion. Post send ingredient_id in name
-        is_deleted = False
-        for temp in ing_list:
-            if str(temp.ingredient_id) in request.POST:
-                Recipe.objects.filter(pk=temp.pk).delete()
-                form = DishForm()
-                is_deleted = True
-                break
-
-        # Add new ingredients to recipe
-        if not is_deleted:
-            form = DishForm(request.POST)
-            if form.is_valid():
-                ing2rec = Recipe(dish_id = dish_id, ingredient_id = form.cleaned_data['ingredient'].id,
-                                 amount=form.cleaned_data['amount'])
-                ing2rec.save()
-        ing_list = Recipe.objects.filter(dish_id=dish_id).select_related('ingredient')
-    else:
-        form = DishForm()
 
     # Formating description. \n -> list_item
-    html_disctiption ='<ul><li>' + rec.description.replace('\n','</li><li>') + '</li></ul>'
-    template = loader.get_template('dish.html')
+    html_disctiption = '<ul><li>' + rec.description.replace('\n', '</li><li>') + '</li></ul>'
     context = {
         'dish_name': rec.name,
         'ingredients_list': ing_list,
         'dish_description': html_disctiption,
-        'form': form,
     }
+
+    if edit:
+        template = loader.get_template('dish_edit.html')
+        data = {'name': rec.name, 'description': rec.description}
+        form = NewDish(data)
+        if request.method == 'POST':
+            form = NewDish(request.POST)
+            form_ing = DishForm(request.POST)
+
+            for temp in ing_list:
+                if 'Delete ' + str(temp.ingredient_id) in request.POST:
+                    Recipe.objects.filter(pk=temp.pk).delete()
+                    form = DishForm()
+                    break
+
+            if form.is_valid():
+                rec.name = form.cleaned_data['name']
+                rec.description = form.cleaned_data['description']
+                rec.save()
+                print('Updated.')
+                return HttpResponseRedirect('../{}'.format(rec.id))
+
+            if form_ing.is_valid():
+                ing2rec = Recipe(dish_id=dish_id, ingredient_id=form_ing.cleaned_data['ingredient'].id,
+                                 amount=form_ing.cleaned_data['amount'])
+                ing2rec.save()
+        else:
+            form_ing = DishForm()
+
+        context['form'] = form
+        context['form_ing'] = form_ing
+        ing_list = Recipe.objects.filter(dish_id=dish_id).select_related('ingredient')
+        context['ingredients_list'] = ing_list
+    else:
+        template = loader.get_template('dish.html')
+
     return HttpResponse(template.render(context, request))
 
 
@@ -216,7 +232,7 @@ def catalog_ingredient(request):
                     # error page
                     return ingredient_error(request, ing)
 
-            if ('Edit ' + str(temp.id)) in request.POST:
+            elif ('Edit ' + str(temp.id)) in request.POST:
                 ingredient = Ingredient.objects.get(pk=temp.pk)
                 return HttpResponseRedirect('{}?edit_mode=True'.format(ingredient.id))
 
@@ -267,11 +283,17 @@ def catalog_recipe(request):
     page = request.GET.get('page')
     menu = paginator.get_page(page)
 
-    if request.method == 'POST':
+    # edit mode
+    edit = request.GET.get('edit_mode')
+
+    if edit and request.method == 'POST':
         for temp in dish_list:
-            if str(temp.id) in request.POST:
+            if ('Delete ' + str(temp.id)) in request.POST:
                 Dish.objects.filter(pk=temp.pk).delete()
                 break
+            elif ('Edit ' + str(temp.id)) in request.POST:
+                dish = Dish.objects.get(pk=temp.pk)
+                return HttpResponseRedirect('{}?edit_mode=True'.format(dish.id))
 
         dish_list = Dish.objects.all().order_by('id')
         paginator = Paginator(dish_list, 20)
@@ -281,6 +303,7 @@ def catalog_recipe(request):
     template = loader.get_template('catalog.html')
     context = {
         'menu': menu,
+        'edit': edit,
     }
     return HttpResponse(template.render(context, request))
 
@@ -292,18 +315,48 @@ def create_dish(request):
     """
     if not request.user.is_staff:
         raise PermissionDenied
+
+    i_list = request.session.setdefault('i_list', [])
+    ingredients_list = [(Ingredient.objects.get(id=i[0]), i[1]) for i in request.session['i_list']]
+
     if request.method == 'POST':
         form = NewDish(request.POST)
-        if form.is_valid():
+        form_ing = DishForm(request.POST)
+
+        not_deleted = True
+        for temp in request.session['i_list']:
+            if 'Delete ' + str(temp[0]) in request.POST:
+                s = request.session['i_list']
+                s.remove(temp)
+                print("Lefted", s)
+                request.session['i_list'] = s
+                form_ing = DishForm()
+                not_deleted = False
+                break
+
+        if not_deleted and form_ing.is_valid():
+            ing_param = (form_ing.cleaned_data['ingredient'].id, float(form_ing.cleaned_data['amount']))
+            i_list = request.session['i_list']
+            request.session['i_list'] = i_list + [ing_param,]
+        elif not_deleted and form.is_valid():
             d = Dish(name=form.cleaned_data['name'], description=form.cleaned_data['description'])
             d.save()
+            for ing in ingredients_list:
+                ing2rec = Recipe(dish_id=d.id, ingredient_id=ing[0].id, amount=ing[1])
+                ing2rec.save()
+
             return HttpResponseRedirect('{}'.format(d.id))
+
+        ingredients_list = [(Ingredient.objects.get(id=i[0]), i[1]) for i in request.session['i_list']]
     else:
-        form=NewDish()
+        form = NewDish()
+        form_ing = DishForm()
 
     template = loader.get_template('create_dish.html')
     context = {
         'form': form,
+        'form_ing': form_ing,
+        'ingredients_list': ingredients_list,
     }
     return HttpResponse(template.render(context, request))
 

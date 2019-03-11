@@ -4,7 +4,7 @@
 {% block title %}RecipeHelper - {{ dish_name }}{% endblock %}
 
 {% block nav %}
-    <a href="{% url 'index' %}">Home.</a>
+    <a href="{% url 'index' %}">Home</a>
     <a href="{% url 'ing_cat' %}">Ingridients</a>
     <a href="{% url 'catalog' %}">Dishes</a>
     <a>Help</a>
@@ -18,29 +18,13 @@
 <h2>{{ dish_name }}</h2>
 <h3>Ingredients:</h3>
 {% if ingredients_list %}
-<ul id="inline">
+<ul>
     {% for ing in ingredients_list %}
         <li>
-            <form method="post" >
-                <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.ingredient.units }}
-                {% csrf_token %}
-                {% if user.is_staff %}
-                <div class="delButton">
-                    <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
-                </div>
-                {% endif %}
-            </form>
+            <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.ingredient.units }}
         </li>
     {% endfor %}
 </ul>
-{% endif %}
-
-{% if user.is_staff %}
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Add">
-</form>
 {% endif %}
 
 <p>{% autoescape off %}{{dish_description}}{% endautoescape %}</p>

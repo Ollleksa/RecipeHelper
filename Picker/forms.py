@@ -30,12 +30,12 @@ class AddIngredient(forms.Form):
 
 class NewDish(forms.Form):
     """
-    Form for creating new dish:
+    Form for creating new dish (and editing existing):
     1) Description use big TextArea to nice view
     """
     name = forms.CharField(max_length = 100)
-    #ingredients = forms.MultipleChoiceField(models.ingredient_for_choice())
-    description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}))
+    #ingredients = forms.MultipleChoiceField(models.ingredient_for_choice()) Need to create something better
+    description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}), required = False)
 
 
 class DishForm(forms.Form):

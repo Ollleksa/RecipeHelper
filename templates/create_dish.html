@@ -14,6 +14,29 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Add">
+    <input type="submit" name="Create" value="Create">
+</form>
+
+<h3>Ingredients:</h3>
+{% if ingredients_list %}
+<ul>
+    {% for ing, amount in ingredients_list %}
+        <li>
+            <form method="post" >
+                <a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a> : {{ amount }} {{ ing.units }}
+                {% csrf_token %}
+                <div class="delButton">
+                    <input type="submit" name = "Delete {{ing.id }}" value="Delete">
+                </div>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form_ing }}
+    <input type="submit" name="Add_Ingredient" value="Add">
 </form>
 {% endblock %}
