@@ -7,8 +7,18 @@ class Ingredient(models.Model):
     Model for Ingredient
     """
     name = models.CharField(max_length = 40, unique = True)
-    units = models.CharField(max_length = 10, default = 'g.')
     description = models.TextField(blank = True, default = '')
+    categories = models.ManyToManyField('IngredientCategory')
+
+    def __str__(self):
+        return self.name
+
+
+class Unit(models.Model):
+    """
+    Model for units used for measurement
+    """
+    name = models.CharField(max_length = 20, unique=True, blank=True, default='')
 
     def __str__(self):
         return self.name
@@ -20,6 +30,40 @@ class Dish(models.Model):
     """
     name = models.CharField(max_length = 100)
     description = models.TextField(blank=True, default='')
+    categories = models.ManyToManyField('DishCategory')
+
+    class Meta:
+        verbose_name_plural = "Dishes"
+
+    def __str__(self):
+        return self.name
+
+
+class IngredientCategory(models.Model):
+    """
+    Model for Ingredient categories
+    """
+    name = models.CharField(max_length = 100)
+    ingredients = models.ManyToManyField('Ingredient')
+
+    class Meta:
+        verbose_name = "Ingredient Category"
+        verbose_name_plural = "Ingredient Categories"
+
+    def __str__(self):
+        return self.name
+
+
+class DishCategory(models.Model):
+    """
+    Model for Dish categories
+    """
+    name = models.CharField(max_length = 100)
+    dishes = models.ManyToManyField('Dish')
+
+    class Meta:
+        verbose_name = "Dish Category"
+        verbose_name_plural = "Dish Categories"
 
     def __str__(self):
         return self.name
@@ -32,10 +76,14 @@ class Recipe(models.Model):
     """
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
+    units = models.ForeignKey(Unit, on_delete=models.PROTECT, blank=True, null=True)
     amount = models.DecimalField(max_digits = 10, decimal_places = 1, null = True)
+    optional = models.BooleanField(default = False)
 
     class Meta:
         unique_together = (('dish', 'ingredient'),)
+        verbose_name = "Ingredient in recipe"
+        verbose_name_plural = "Ingredients in recipes"
 
     def __str__(self):
         des = 'Ingredient {0} from {1}'.format(self.ingredient.name, self.dish.name)
@@ -50,6 +98,10 @@ class Fridge(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     is_available = models.BooleanField(default = True)
+
+    class Meta:
+        verbose_name = "Ingredient in Fridge"
+        verbose_name_plural = "Ingredients in Fridges"
 
     def __str__(self):
         if not self.is_available:

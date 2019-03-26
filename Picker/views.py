@@ -124,13 +124,12 @@ def ing(request, ingredient_id):
 
     if edit:
         template = loader.get_template('ingredient_edit.html')
-        data = {'name': ingredient.name, 'units': ingredient.units, 'description': ingredient.description}
+        data = {'name': ingredient.name, 'description': ingredient.description}
         form = EditIngredient(data)
         if request.method == 'POST':
             form = EditIngredient(request.POST)
             if form.is_valid():
                 ingredient.name = form.cleaned_data['name']
-                ingredient.units = form.cleaned_data['units']
                 ingredient.description = form.cleaned_data['description']
                 ingredient.save()
                 print('Updated.')
@@ -190,7 +189,7 @@ def recipe(request, dish_id):
 
             if form_ing.is_valid():
                 ing2rec = Recipe(dish_id=dish_id, ingredient_id=form_ing.cleaned_data['ingredient'].id,
-                                 amount=form_ing.cleaned_data['amount'])
+                                 amount=form_ing.cleaned_data['amount'], units=form_ing.cleaned_data['units'])
                 ing2rec.save()
         else:
             form_ing = DishForm()
@@ -259,8 +258,7 @@ def create_ingredient(request):
     if request.method == 'POST':
         form = NewIngredient(request.POST)
         if form.is_valid():
-            ing = Ingredient(name=form.cleaned_data['name'], units=form.cleaned_data['units'],
-                             description=form.cleaned_data['description'])
+            ing = Ingredient(name=form.cleaned_data['name'], description=form.cleaned_data['description'])
             ing.save()
     else:
         form=NewIngredient()
@@ -309,7 +307,7 @@ def catalog_recipe(request):
 
 def create_dish(request):
     """
-    View page for Dish creation. Ingredients adds after creation.
+    View page for Dish creation. Ingredients can be added right now.
     :param request: Django request
     :return: HttpResponse
     """
@@ -335,14 +333,15 @@ def create_dish(request):
                 break
 
         if not_deleted and form_ing.is_valid():
-            ing_param = (form_ing.cleaned_data['ingredient'].id, float(form_ing.cleaned_data['amount']))
+            ing_param = (form_ing.cleaned_data['ingredient'].id, float(form_ing.cleaned_data['amount']),
+                         form_ing.cleaned_data['units'])
             i_list = request.session['i_list']
             request.session['i_list'] = i_list + [ing_param,]
         elif not_deleted and form.is_valid():
             d = Dish(name=form.cleaned_data['name'], description=form.cleaned_data['description'])
             d.save()
             for ing in ingredients_list:
-                ing2rec = Recipe(dish_id=d.id, ingredient_id=ing[0].id, amount=ing[1])
+                ing2rec = Recipe(dish_id=d.id, ingredient_id=ing[0].id, amount=ing[1], units=ing[2])
                 ing2rec.save()
 
             return HttpResponseRedirect('{}'.format(d.id))
