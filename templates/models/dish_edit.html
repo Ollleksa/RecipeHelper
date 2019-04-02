@@ -4,15 +4,15 @@
 {% block title %}RecipeHelper - {{ dish_name }}{% endblock %}
 
 {% block nav %}
-    <a href="{% url 'index' %}">Home</a>
-    <a href="{% url 'ing_cat' %}">Ingridients</a>
-    <a href="{% url 'catalog' %}">Dishes</a>
-    <a href="{% url 'help' %}">Help</a>
+    <a href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
 {% endblock %}
 
 {% block content %}
 <h2>{{ dish_name }}</h2>
-<h3>Ingredients:</h3>
+<h3>Складники:</h3>
 {% if ingredients_list %}
 <ul id="inline">
     {% for ing in ingredients_list %}
@@ -22,7 +22,7 @@
                 {% csrf_token %}
                 {% if user.is_staff %}
                 <div class="delButton">
-                    <input type="submit" name = "Delete {{ing.ingredient_id }}" value="Delete">
+                    <input type="submit" name = "Delete {{ing.ingredient_id }}" value="Видалити">
                 </div>
                 {% endif %}
             </form>
@@ -34,14 +34,14 @@
 <form method="post" action="">
     {% csrf_token %}
     {{ form_ing }}
-    <input type="submit" name="AddIngredient" value="Update">
+    <input type="submit" name="AddIngredient" value="Додати">
 </form>
 
 {% if user.is_staff %}
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" name="Update" value="Update">
+    <input type="submit" name="Update" value="Оновити">
 </form>
 {% endif %}
 

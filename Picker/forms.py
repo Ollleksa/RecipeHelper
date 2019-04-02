@@ -8,8 +8,11 @@ class NewIngredient(forms.Form):
     1) Description use big TextArea to nice view
     """
     name = forms.CharField(max_length = 40)
-    description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}))
-
+    description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}), required = False)
+    energy = forms.DecimalField(required = False)
+    proteins = forms.DecimalField(required = False)
+    fats = forms.DecimalField(required = False)
+    carbohydrate = forms.DecimalField(required = False)
 
 class EditIngredient(forms.Form):
     """
@@ -17,6 +20,10 @@ class EditIngredient(forms.Form):
     """
     name = forms.CharField(max_length = 40)
     description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}), required = False)
+    energy = forms.DecimalField(required=False)
+    proteins = forms.DecimalField(required=False)
+    fats = forms.DecimalField(required=False)
+    carbohydrate = forms.DecimalField(required=False)
 
 
 class AddIngredient(forms.Form):

@@ -1,17 +1,17 @@
 {% extends '../base.html' %}
 
-{% block title %}LogOut - Recipe Helper{% endblock %}
+{% block title %}Вихід - Recipe Helper{% endblock %}
 
 {% block nav %}
-    <a href="{% url 'index' %}">Home</a>
-    <a href="{% url 'ing_cat' %}">Ingridients</a>
-    <a href="{% url 'catalog' %}">Dishes</a>
-    <a href="{% url 'help' %}">Help</a>
+    <a href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
 {% endblock %}
 
 {% block content %}
 
-<p>You logged out!</p>
-<a href="{% url 'login' %}">Log in back!</a>
+<p>Ви успішно вийшли!</p>
+<a href="{% url 'login' %}">Ввійти назад!</a>
 
 {% endblock %}

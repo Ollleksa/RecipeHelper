@@ -4,19 +4,19 @@
 {% block title %}RecipeHelper - {{ dish_name }}{% endblock %}
 
 {% block nav %}
-    <a href="{% url 'index' %}">Home</a>
-    <a href="{% url 'ing_cat' %}">Ingridients</a>
-    <a href="{% url 'catalog' %}">Dishes</a>
-    <a href="{% url 'help' %}">Help</a>
+    <a href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
 {% endblock %}
 
 {% block admin %}
-<a href="?edit_mode=True">Edit Recipe</a>
+<a href="?edit_mode=True">Редагувати рецепт</a>
 {% endblock %}
 
 {% block content %}
 <h2>{{ dish_name }}</h2>
-<h3>Ingredients:</h3>
+<h3>Складники:</h3>
 {% if ingredients_list %}
 <ul>
     {% for ing in ingredients_list %}

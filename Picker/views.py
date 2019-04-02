@@ -1,4 +1,5 @@
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse_lazy
@@ -118,12 +119,11 @@ def ing(request, ingredient_id):
     edit = request.GET.get('edit_mode')
 
     context = {
-        'ing_name': ingredient.name,
-        'ing_description': ingredient.description,
+        'ing': ingredient,
     }
 
     if edit:
-        template = loader.get_template('ingredient_edit.html')
+        template = loader.get_template('models/ingredient_edit.html')
         data = {'name': ingredient.name, 'description': ingredient.description}
         form = EditIngredient(data)
         if request.method == 'POST':
@@ -131,12 +131,16 @@ def ing(request, ingredient_id):
             if form.is_valid():
                 ingredient.name = form.cleaned_data['name']
                 ingredient.description = form.cleaned_data['description']
+                ingredient.energy = form.cleaned_data['energy']
+                ingredient.proteins = form.cleaned_data['proteins']
+                ingredient.fats = form.cleaned_data['fats']
+                ingredient.carbohydrate = form.cleaned_data['carbohydrate']
                 ingredient.save()
                 print('Updated.')
                 return HttpResponseRedirect('../{}'.format(ingredient.id))
         context['form'] = form
     else:
-        template = loader.get_template('ingredient.html')
+        template = loader.get_template('models/ingredient.html')
 
     return HttpResponse(template.render(context, request))
 
@@ -167,7 +171,7 @@ def recipe(request, dish_id):
     }
 
     if edit:
-        template = loader.get_template('dish_edit.html')
+        template = loader.get_template('models/dish_edit.html')
         data = {'name': rec.name, 'description': rec.description}
         form = NewDish(data)
         if request.method == 'POST':
@@ -199,7 +203,7 @@ def recipe(request, dish_id):
         ing_list = Recipe.objects.filter(dish_id=dish_id).select_related('ingredient')
         context['ingredients_list'] = ing_list
     else:
-        template = loader.get_template('dish.html')
+        template = loader.get_template('models/dish.html')
 
     return HttpResponse(template.render(context, request))
 
@@ -240,7 +244,7 @@ def catalog_ingredient(request):
         page = request.GET.get('page')
         product = paginator.get_page(page)
 
-    template = loader.get_template('ingredient_catalog.html')
+    template = loader.get_template('models/ingredient_catalog.html')
     context = {
         'product': product,
         'edit': edit,
@@ -258,12 +262,14 @@ def create_ingredient(request):
     if request.method == 'POST':
         form = NewIngredient(request.POST)
         if form.is_valid():
-            ing = Ingredient(name=form.cleaned_data['name'], description=form.cleaned_data['description'])
+            ing = Ingredient(name=form.cleaned_data['name'], description=form.cleaned_data['description'],
+                             energy = form.cleaned_data['energy'], proteins = form.cleaned_data['proteins'],
+                             fats = form.cleaned_data['fats'], carbohydrate = form.cleaned_data['carbohydrate'])
             ing.save()
     else:
         form=NewIngredient()
 
-    template = loader.get_template('create_ingredient.html')
+    template = loader.get_template('models/create_ingredient.html')
     context = {
         'form': form,
     }
@@ -298,7 +304,7 @@ def catalog_recipe(request):
         page = request.GET.get('page')
         menu = paginator.get_page(page)
 
-    template = loader.get_template('catalog.html')
+    template = loader.get_template('models/catalog.html')
     context = {
         'menu': menu,
         'edit': edit,
@@ -351,7 +357,7 @@ def create_dish(request):
         form = NewDish()
         form_ing = DishForm()
 
-    template = loader.get_template('create_dish.html')
+    template = loader.get_template('models/create_dish.html')
     context = {
         'form': form,
         'form_ing': form_ing,
@@ -368,7 +374,7 @@ def ingredient_error(request, ing):
     """
     ingredient_name = ing.name
     recipes_list = Recipe.objects.filter(ingredient=ing.id)
-    template = loader.get_template('delete_error.html')
+    template = loader.get_template('models/delete_error.html')
     context = {
         "ingredient_name": ingredient_name,
         "recipes_list": recipes_list,

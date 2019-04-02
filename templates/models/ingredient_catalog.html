@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}RecipeHelper - Складники{% endblock %}
+
+{% block nav %}
+    <a href="{% url 'index' %}">Домівка</a>
+    <a class="active" href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
+{% endblock %}
+
+{% block admin %}
+<a href="/ingredient/create">Додати новий складник</a>
+<a href="?page={{product.number}}&edit_mode=True">Видалити/Редагувати складник</a>
+{% endblock %}
+
+{% block content %}
+<div class="center">
+<h2>Ingredient catalog</h2>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if product.has_previous %}
+            <a href="?page=1">Перша</a>
+            <a href="?page={{ product.previous_page_number }}">Попередня</a>
+        {% endif %}
+
+        <span class="current">
+            Сторінка {{ product.number }} з {{ product.paginator.num_pages }}
+        </span>
+
+        {% if product.has_next %}
+            <a href="?page={{ product.next_page_number }}">Наступна</a>
+            <a href="?page={{ product.paginator.num_pages }}">Остання</a>
+        {% endif %}
+    </span>
+</div>
+
+<h3>Можливі складники:</h3>
+{% if product %}
+<table class="center">
+    {% for ing in product %}
+    <tr>
+    <th><a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a></th>
+    {% if user.is_staff %}
+    {% if edit %}
+    <th><form method="post" >
+        {% csrf_token %}
+        <div class="delButton">
+                    <input type="submit" name = "Delete {{ing.id}}" value="Видалити" title="Видалити складник">
+        </div>
+    </form></th>
+    <th><form method="post" >
+        {% csrf_token %}
+        <div class="editButton">
+                    <input type="submit" name = "Edit {{ing.id}}" value="Редагувати" title="Редагувати складник">
+        </div>
+    </form></th>
+    {% endif %}
+    {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% if user.is_staff %}
+<h3><a href="/ingredient/create">Додати новий складник</a></h3>
+{% endif %}
+</div>
+{% endblock %}

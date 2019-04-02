@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}RecipeHelper - Catalog{% endblock %}
+{% block title %}RecipeHelper - Створення рецепту{% endblock %}
 
 {% block nav %}
-    <a href="{% url 'index' %}">Home</a>
-    <a href="{% url 'ing_cat' %}">Ingridients</a>
-    <a href="{% url 'catalog' %}">Dishes</a>
-    <a href="{% url 'help' %}">Help</a>
+    <a href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
 {% endblock %}
 
 {% block content %}
-<h2>Add new dish</h2>
+<h2>Створення рецепту</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" name="Create" value="Create">
+    <input type="submit" name="Create" value="Створити">
 </form>
 
-<h3>Ingredients:</h3>
+<h3>Складники:</h3>
 {% if ingredients_list %}
 <ul>
     {% for ing, amount in ingredients_list %}
@@ -26,7 +26,7 @@
                 <a href="/ingredient/{{ ing.id }} "> {{ ing.name }} </a> : {{ amount }} {{ ing.units }}
                 {% csrf_token %}
                 <div class="delButton">
-                    <input type="submit" name = "Delete {{ing.id }}" value="Delete">
+                    <input type="submit" name = "Delete {{ing.id }}" value="Видалити">
                 </div>
             </form>
         </li>
@@ -37,6 +37,6 @@
 <form method="post">
     {% csrf_token %}
     {{ form_ing }}
-    <input type="submit" name="Add_Ingredient" value="Add">
+    <input type="submit" name="Add_Ingredient" value="Додати">
 </form>
 {% endblock %}

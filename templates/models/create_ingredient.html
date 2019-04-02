@@ -1,6 +1,7 @@
-{% extends '../base.html' %}
+{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Реєстрація - Recipe Helper{% endblock %}
+{% block title %}RecipeHelper - Додати складник{% endblock %}
 
 {% block nav %}
     <a href="{% url 'index' %}">Домівка</a>
@@ -10,13 +11,10 @@
 {% endblock %}
 
 {% block content %}
-
-<h2>Реєстрація</h2>
-
+<h2>Додати новий складник:</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Зареєструватись</button>
+    <input type="submit" value="Додати">
 </form>
-
 {% endblock %}

@@ -8,7 +8,11 @@ class Ingredient(models.Model):
     """
     name = models.CharField(max_length = 40, unique = True)
     description = models.TextField(blank = True, default = '')
-    categories = models.ManyToManyField('IngredientCategory')
+    proteins = models.DecimalField(max_digits=6, decimal_places=3, null = True, blank = True, default = None)
+    fats = models.DecimalField(max_digits=6, decimal_places=3, null = True, blank = True, default = None)
+    carbohydrate = models.DecimalField(max_digits=6, decimal_places=3, null = True, blank = True, default = None)
+    energy = models.DecimalField(max_digits=7, decimal_places=2,null = True, blank = True, default = None)
+    categories = models.ManyToManyField('IngredientCategory', blank = True)
 
     def __str__(self):
         return self.name
@@ -30,7 +34,7 @@ class Dish(models.Model):
     """
     name = models.CharField(max_length = 100)
     description = models.TextField(blank=True, default='')
-    categories = models.ManyToManyField('DishCategory')
+    categories = models.ManyToManyField('DishCategory', blank = True)
 
     class Meta:
         verbose_name_plural = "Dishes"
