@@ -61,8 +61,11 @@
     <h2>Додати нові продукти до холодильника:</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Add" class="Додати">
+        Інгрідієнт
+        {{ form.ingredient.errors }}
+        {{ form.ingredient }}
+        {{ form.ingredient.help_text }}
+        <input type="submit" value="Додати" class="Add">
     </form>
 </div>
 

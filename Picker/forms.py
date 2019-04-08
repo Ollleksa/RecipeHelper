@@ -39,7 +39,6 @@ class NewDish(forms.Form):
     1) Description use big TextArea to nice view
     """
     name = forms.CharField(max_length = 100)
-    #ingredients = forms.MultipleChoiceField(models.ingredient_for_choice()) Need to create something better
     description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}), required = False)
 
 

@@ -13,6 +13,7 @@ class Ingredient(models.Model):
     carbohydrate = models.DecimalField(max_digits=6, decimal_places=3, null = True, blank = True, default = None)
     energy = models.DecimalField(max_digits=7, decimal_places=2,null = True, blank = True, default = None)
     categories = models.ManyToManyField('IngredientCategory', blank = True)
+    #units = models.ManyToManyField('Unit', blank = True)
 
     def __str__(self):
         return self.name
@@ -48,7 +49,7 @@ class IngredientCategory(models.Model):
     Model for Ingredient categories
     """
     name = models.CharField(max_length = 100)
-    ingredients = models.ManyToManyField('Ingredient')
+    ingredients = models.ManyToManyField('Ingredient', blank = True)
 
     class Meta:
         verbose_name = "Ingredient Category"
@@ -63,7 +64,7 @@ class DishCategory(models.Model):
     Model for Dish categories
     """
     name = models.CharField(max_length = 100)
-    dishes = models.ManyToManyField('Dish')
+    dishes = models.ManyToManyField('Dish', blank = True)
 
     class Meta:
         verbose_name = "Dish Category"
@@ -109,10 +110,10 @@ class Fridge(models.Model):
 
     def __str__(self):
         if not self.is_available:
-            insert = 'do not '
+            insert = 'do not'
         else:
             insert = ''
-        description = "Record {0}: User {1} {2}have {3}.".format(self.id, self.user.username, insert, self.ingredient.name)
+        description = "Record {0}: User {1} {2} have {3}.".format(self.id, self.user.username, insert, self.ingredient.name)
         return description
 
 
@@ -143,3 +144,19 @@ def recipe_finder_session(session):
     dishes = Dish.objects.all().values('id')
     available_dish_id = dishes.difference(recipes)
     return available_dish_id
+
+
+def get_dish_energy(ing_list):
+    """
+    Calculate energy, proteins, fats and carbohydrates for particular dish
+    :param ing_list: recipe model list for dish
+    :return: (energy, proteins, fats, carbohydrates)
+    """
+    values = [(i.amount * i.ingredient.energy, i.amount * i.ingredient.proteins, i.amount * i.ingredient.fats, i.amount * i.ingredient.carbohydrate) for i in ing_list]
+    energy, proteins, fats, carbohydrate = 0, 0, 0, 0
+    for j in values:
+        energy += j[0]/100
+        proteins += j[1]/100
+        fats += j[2]/100
+        carbohydrate += j[3]/100
+    return (energy, proteins, fats, carbohydrate)

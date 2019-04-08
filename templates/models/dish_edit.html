@@ -21,9 +21,9 @@
                 <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.ingredient.units }}
                 {% csrf_token %}
                 {% if user.is_staff %}
-                <div class="delButton">
+                <span class="delButton">
                     <input type="submit" name = "Delete {{ing.ingredient_id }}" value="Видалити">
-                </div>
+                </span>
                 {% endif %}
             </form>
         </li>
@@ -33,14 +33,44 @@
 
 <form method="post" action="">
     {% csrf_token %}
-    {{ form_ing }}
+    {{ form_ing.non_field_errors }}
+        Інігрідієнт:
+          {{ form_ing.ingredient.errors }}
+          {{ form_ing.ingredient }}
+          {{ form_ing.ingredient.help_text }}
+        Кількість:
+          {{ form_ing.amount.errors }}
+          {{ form_ing.amount }}
+          {{ form_ing.amount.help_text }}
+        Одиниці вимірювання:
+          {{ form_ing.units.errors }}
+          {{ form_ing.units }}
+          {{ form_ing.units.help_text }}
     <input type="submit" name="AddIngredient" value="Додати">
 </form>
 
 {% if user.is_staff %}
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.non_field_errors }}
+    <table>
+        <tr>
+            <th>Ім'я</th>
+        <th>
+          {{ form.name.errors }}
+          {{ form.name }}
+          {{ form.name.help_text }}
+        </th>
+        </tr>
+        <tr>
+            <th>Опис</th>
+        <th>
+          {{ form.description.errors }}
+          {{ form.description }}
+          {{ form.description.help_text }}
+        </th>
+        </tr>
+     </table>
     <input type="submit" name="Update" value="Оновити">
 </form>
 {% endif %}
