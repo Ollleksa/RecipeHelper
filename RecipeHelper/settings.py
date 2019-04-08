@@ -77,11 +77,11 @@ WSGI_APPLICATION = 'RecipeHelper.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'recipehelperdb',
-        'USER': 'pickeradmin',
-        'PASSWORD': 'welcome!',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        #'PASSWORD': 'welcome!',
+        'HOST': 'db',
+        'PORT': 5432,
     }
 }
 
