@@ -1,22 +1,22 @@
 {% extends '../base.html' %}
 
-{% block title %}SignUp - Recipe Helper{% endblock %}
+{% block title %}Реєстрація - Recipe Helper{% endblock %}
 
 {% block nav %}
-    <a href="{% url 'index' %}">Home</a>
-    <a href="{% url 'ing_cat' %}">Ingridients</a>
-    <a href="{% url 'catalog' %}">Dishes</a>
-    <a href="{% url 'help' %}">Help</a>
+    <a href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
 {% endblock %}
 
 {% block content %}
 
-<h2>Sign Up</h2>
+<h2>Реєстрація</h2>
 
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Sign Up</button>
+    <button type="submit">Зареєструватись</button>
 </form>
 
 {% endblock %}

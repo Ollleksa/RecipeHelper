@@ -9,24 +9,24 @@
 <body>
 <header>
     <h2>RecipeHelper</h2>
-    <p>Best app for finding what to cook.</p>
+    <p>Додаток що завжди занайде що б приготувати</p>
 </header>
 
 <nav>
     <div class="navi">
     {% block nav %}
-    <a class="active" href="{% url 'index' %}">Home</a>
-    <a href="{% url 'ing_cat' %}">Ingridients</a>
-    <a href="{% url 'catalog' %}">Dishes</a>
-    <a href="{% url 'help' %}">Help</a>
+    <a class="active" href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
     {% endblock %}
     </div>
     <div class="log">
 {% if user.is_authenticated %}
-    <a href="{% url 'logout' %}">Log Out</a>
+    <a href="{% url 'logout' %}">Вийти</a>
 {% else %}
-    <a href="{% url 'login' %}">Log In</a>
-    <a href="{% url 'signup' %}">Sign Up</a>
+    <a href="{% url 'login' %}">Ввійти</a>
+    <a href="{% url 'signup' %}">Зареєструватись</a>
 {% endif %}
     </div>
 </nav>
@@ -35,11 +35,11 @@
 <nav class="edit">
     <div>
         {% if user.is_superuser %}
-        <a href="/admin">Admin</a>
+        <a href="/admin">Сторінка адміна</a>
         {% endif %}
         {% block admin %}
-        <a href="/recipe/create">Create new recipe</a>
-        <a href="/ingredient/create">Create new ingredient.</a>
+        <a href="/recipe/create">Додати новий рецепт</a>
+        <a href="/ingredient/create">Додати новий складник</a>
         {% endblock %}
     </div>
 </nav>
@@ -51,9 +51,9 @@
 </div>
 
 <footer>
-    <p>Powered by <a href="https://www.djangoproject.com/">Django</a>.</p>
-    <p>Questions and feedback send to <span class="email">test@test.test.</span></p>
-    <p>Under the <a href="https://creativecommons.org/licenses/by-sa/3.0/"> CC BY-SA 3.0 license</a>.</p>
+    <p>Написано з використанням <a href="https://www.djangoproject.com/">Django</a>.</p>
+    <p>Запитання і пропозиції: <span class="email">test@test.test.</span></p>
+    <p>Ліцензія: <a href="https://creativecommons.org/licenses/by-sa/3.0/"> CC BY-SA 3.0 license</a>.</p>
 </footer>
 </body>
 </html>

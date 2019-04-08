@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}RecipeHelper - Помилка видалення {% endblock %}
+
+{% block nav %}
+    <a href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
+{% endblock %}
+
+{% block content %}
+<h2>{{ ingredient_name }}</h2>
+<h3>Даний інгрідієнт використовується в наступних рецептах, і не може бути видаленим:</h3>
+<ul>
+    {% for ing in recipes_list %}
+        <li>
+            <a href="/recipe/{{ ing.dish.id }}"> {{ ing.dish.name }} </a>
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
+</body>
+
+</html>

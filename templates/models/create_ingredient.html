@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}RecipeHelper - Додати складник{% endblock %}
+
+{% block nav %}
+    <a href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
+{% endblock %}
+
+{% block content %}
+<h2>Додати новий складник:</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <table>
+        <tr>
+            <th>Ім'я</th>
+        <th>
+          {{ form.name.errors }}
+          {{ form.name }}
+          {{ form.name.help_text }}
+        </th>
+        </tr>
+
+        <tr>
+            <th>Калорії</th>
+        <th>
+          {{ form.energy.errors }}
+          {{ form.energy }}
+          {{ form.energy.help_text }}
+        </th>
+        </tr>
+
+        <tr>
+            <th>Білки</th>
+        <th>
+          {{ form.proteins.errors }}
+          {{ form.proteins }}
+          {{ form.proteins.help_text }}
+        </th>
+        <tr>
+            <th>Жири</th>
+        <th>
+          {{ form.fats.errors }}
+          {{ form.fats }}
+          {{ form.fats.help_text }}
+        </th>
+        <tr>
+            <th>Вуглеводи</th>
+        <th>
+          {{ form.carbohydrate.errors }}
+          {{ form.carbohydrate }}
+          {{ form.carbohydrate.help_text }}
+        </th>
+        </tr>
+
+        <tr>
+            <th>Опис</th>
+        <th>
+          {{ form.description.errors }}
+          {{ form.description }}
+          {{ form.description.help_text }}
+        </th>
+        </tr>
+     </table>
+    <input type="submit" value="Додати">
+</form>
+{% endblock %}

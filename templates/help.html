@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}RecipeHelper - Catalog{% endblock %}
+{% block title %}RecipeHelper - Допомога{% endblock %}
 
 {% block nav %}
-    <a href="{% url 'index' %}">Home</a>
-    <a href="{% url 'ing_cat' %}">Ingridients</a>
-    <a href="{% url 'catalog' %}">Dishes</a>
-    <a class="active" href="{% url 'help' %}">Help</a>
+    <a href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a class="active" href="{% url 'help' %}">Допомога</a>
 {% endblock %}
 
 
 {% block content %}
 <div class="welcome">
-<h2> Welcome to RecipeHelper!</h2>
-<p>This is application for finding what to cook. You can add Ingredients, that you have, and app return you list of
-dishes you can cook. Just so easy.</p>
+<h2> Вітаєсо в RecipeHelper!</h2>
+<p>Ця програма шукає які страви ви можете приготувати. Необхідно додати продукти які є в вас в наявності і програма
+    поверне список став що з них можна приготувати. Дуже просто.</p>
 </div>
 <hr>
 
-<h2>Step-by-step instruction</h2>
+<h2>Покрокова інструкція</h2>
 <ol>
     <li>
         Firstly add some ingredient to you fridge. Under "Add new stock", you can pick ingredient you want and click

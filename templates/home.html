@@ -1,19 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}RecipeHelper - Catalog{% endblock %}
+{% block title %}RecipeHelper - Домівка{% endblock %}
 
 {% block content %}
 
 <div class="welcome">
 
 {% if user.is_authenticated %}
-<h2>Hi {{ user.username }}! Welcome back!</h2>
+<h2>Вітаю, {{ user.username }}! З поверненням!</h2>
 {% else %}
-<h2> Welcome to RecipeHelper!</h2>
-<p><em>Just imagine here pictures of most delicious dishes ever, because site is in development and I didnt manage to do it in time</em></p>
-<p>This application can help to answer the question "What should I cook when I had all only this stuff?</p>
-<p>Just add some ingredients to your fridge and start.</p>
+<h2>Ласкаво просимо до RecipeHelper!</h2>
+<p>Ця програма створена для того, що б допомгти вам визначитись що б приготувати. </p>
+<p>Просто додайте декілька продуктів в "холодильник" і почнемо.</p>
 {% endif %}
 </div>
 <hr>
@@ -21,7 +20,7 @@
 <div class="wrapper">
 <div class="fridge">
     {% if ing_list %}
-    <h2>It is your fridge:</h2>
+    <h2>В вашому холодильнику:</h2>
     <table>
         {% for ing in ing_list %}
         {% if user.is_authenticated %}
@@ -33,7 +32,7 @@
             <form method="post" >
                 {% csrf_token %}
                 <div class="delButton">
-                    <input type="submit" name = "{{ ing.ingredient_id }}" value="Delete">
+                    <input type="submit" name = "{{ ing.ingredient_id }}" value="Забрати">
                 </div>
             </form>
         </th>
@@ -47,7 +46,7 @@
             <form method="post" >
                 {% csrf_token %}
                 <div class="delButton">
-                    <input type="submit" name = "{{ ing.id }}" value="Delete">
+                    <input type="submit" name = "{{ ing.id }}" value="Забрати">
                 </div>
             </form>
         </th>
@@ -56,27 +55,30 @@
         {% endfor %}
     </table>
     {% else %}
-    <h2>You fridge is empty :(</h2>
+    <h2>Ваш холодильник пустий.</h2>
     {% endif %}
 
-    <h2>Add new ingredients to you fridge:</h2>
+    <h2>Додати нові продукти до холодильника:</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Add" class="Submit">
+        Інгрідієнт
+        {{ form.ingredient.errors }}
+        {{ form.ingredient }}
+        {{ form.ingredient.help_text }}
+        <input type="submit" value="Додати" class="Add">
     </form>
 </div>
 
 <div class="posibilities">
     {% if dish_list %}
-    <h3>You can cook next:</h3>
+    <h3>З ваших продуктів можна приготувати:</h3>
     <ul>
         {% for dish in dish_list %}
         <li><a href="/recipe/{{ dish.id }} "> {{ dish.name }} </a>
         {% endfor %}
     </ul>
     {% else %}
-    <h3>You had nothing to cook. Time for shopping?</h3>
+    <h3>Нажаль ми не знаємо що вам приготувати, можливо варто сходити в магазин.</h3>
     {% endif %}
 </div>
 </div>

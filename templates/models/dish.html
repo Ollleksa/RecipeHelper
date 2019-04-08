@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}RecipeHelper - {{ dish_name }}{% endblock %}
+
+{% block nav %}
+    <a href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
+{% endblock %}
+
+{% block admin %}
+<a href="?edit_mode=True">Редагувати рецепт</a>
+{% endblock %}
+
+{% block content %}
+<h2>{{ dish_name }}</h2>
+<h3>Складники:</h3>
+{% if ingredients_list %}
+<ul>
+    {% for ing in ingredients_list %}
+        <li>
+            <a href="/ingredient/{{ ing.ingredient_id }} "> {{ ing.ingredient.name }} </a> : {{ ing.amount }} {{ ing.units }}
+        </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<ul>
+    <li>Енергетична цінність: {{ energy.0 }}</li>
+    <li>Білки: {{ energy.1 }}</li>
+    <li>Жири: {{ energy.2 }}</li>
+    <li>Вуглеводи: {{ energy.3 }}</li>
+</ul>
+
+<p>{% autoescape off %}{{dish_description}}{% endautoescape %}</p>
+
+{% endblock %}
+</body>
+
+</html>

@@ -1,30 +1,30 @@
 {% extends '../base.html' %}
 
-{% block title %}LogIn - Recipe Helper{% endblock %}
+{% block title %}Вхід - Recipe Helper{% endblock %}
 
 {% block nav %}
-    <a href="{% url 'index' %}">Home</a>
-    <a href="{% url 'ing_cat' %}">Ingridients</a>
-    <a href="{% url 'catalog' %}">Dishes</a>
-    <a href="{% url 'help' %}">Help</a>
+    <a href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
 {% endblock %}
 
 {% block content %}
 
 {% if form.errors %}
-    <p>Your username and password didnt match.</p>
+    <p>Не існує такої комбінації імені і пароля.</p>
 {% endif %}
 
 <form method="post" action="{% url 'login' %}">
     {% csrf_token %}
-    <p>Username:</p>
+    <p>Ім'я:</p>
     {{ form.username }}
-    <p>Password:</p>
+    <p>Пароль:</p>
     {{ form.password }}
-    <input type="submit" value="login">
+    <input type="submit" value="Ввійти">
 </form>
 
-<h3>Dont have account?</h3>
-<a href="{% url 'signup' %}">SignUp</a>
+<h3>Не зареєстровані в системі?</h3>
+<a href="{% url 'signup' %}">Зареєструватись</a>
 
 {% endblock %}

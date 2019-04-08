@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}RecipeHelper - {{ ing_name }}{% endblock %}
+
+{% block nav %}
+    <a href="{% url 'index' %}">Домівка</a>
+    <a href="{% url 'ing_cat' %}">Складники</a>
+    <a href="{% url 'catalog' %}">Страви</a>
+    <a href="{% url 'help' %}">Допомога</a>
+{% endblock %}
+
+{% block admin %}
+<a href="?edit_mode=True">Редагувати складник</a>
+{% endblock %}
+
+{% block content %}
+<h2>{{ ing.name }}</h2>
+<h3>Енергетична цінність (на 100 г): </h3> {{ ing.energy }} ккал
+<h3>Поживна цінність (на 100 г):</h3>
+<ul>
+    <li>Білки - {{ ing.proteins }} г.</li>
+    <li>Жири - {{ ing.fats }} г.</li>
+    <li>Вуглеводи - {{ ing.carbohydrate }} г.</li>
+</ul>
+<p>{{ ing.description }}</p>
+{% endblock %}

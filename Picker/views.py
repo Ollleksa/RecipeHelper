@@ -1,4 +1,5 @@
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse_lazy
@@ -6,7 +7,7 @@ from django.db import models
 from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied
 
-from .models import Ingredient, Dish, Recipe, Fridge, recipe_finder, recipe_finder_session
+from .models import Ingredient, Dish, Recipe, Fridge, recipe_finder, recipe_finder_session, Unit, get_dish_energy
 from .forms import NewIngredient, NewDish, DishForm, AddIngredient, EditIngredient
 
 
@@ -118,26 +119,29 @@ def ing(request, ingredient_id):
     edit = request.GET.get('edit_mode')
 
     context = {
-        'ing_name': ingredient.name,
-        'ing_description': ingredient.description,
+        'ing': ingredient,
     }
 
     if edit:
-        template = loader.get_template('ingredient_edit.html')
-        data = {'name': ingredient.name, 'units': ingredient.units, 'description': ingredient.description}
+        template = loader.get_template('models/ingredient_edit.html')
+        data = {'name': ingredient.name, 'description': ingredient.description, 'energy': ingredient.energy,
+                'proteins': ingredient.proteins, 'fats': ingredient.fats, 'carbohydrate': ingredient.carbohydrate,}
         form = EditIngredient(data)
         if request.method == 'POST':
             form = EditIngredient(request.POST)
             if form.is_valid():
                 ingredient.name = form.cleaned_data['name']
-                ingredient.units = form.cleaned_data['units']
                 ingredient.description = form.cleaned_data['description']
+                ingredient.energy = form.cleaned_data['energy']
+                ingredient.proteins = form.cleaned_data['proteins']
+                ingredient.fats = form.cleaned_data['fats']
+                ingredient.carbohydrate = form.cleaned_data['carbohydrate']
                 ingredient.save()
                 print('Updated.')
                 return HttpResponseRedirect('../{}'.format(ingredient.id))
         context['form'] = form
     else:
-        template = loader.get_template('ingredient.html')
+        template = loader.get_template('models/ingredient.html')
 
     return HttpResponse(template.render(context, request))
 
@@ -165,10 +169,11 @@ def recipe(request, dish_id):
         'dish_name': rec.name,
         'ingredients_list': ing_list,
         'dish_description': html_disctiption,
+        'energy': get_dish_energy(ing_list),
     }
 
     if edit:
-        template = loader.get_template('dish_edit.html')
+        template = loader.get_template('models/dish_edit.html')
         data = {'name': rec.name, 'description': rec.description}
         form = NewDish(data)
         if request.method == 'POST':
@@ -190,7 +195,7 @@ def recipe(request, dish_id):
 
             if form_ing.is_valid():
                 ing2rec = Recipe(dish_id=dish_id, ingredient_id=form_ing.cleaned_data['ingredient'].id,
-                                 amount=form_ing.cleaned_data['amount'])
+                                 amount=form_ing.cleaned_data['amount'], units=form_ing.cleaned_data['units'])
                 ing2rec.save()
         else:
             form_ing = DishForm()
@@ -200,7 +205,7 @@ def recipe(request, dish_id):
         ing_list = Recipe.objects.filter(dish_id=dish_id).select_related('ingredient')
         context['ingredients_list'] = ing_list
     else:
-        template = loader.get_template('dish.html')
+        template = loader.get_template('models/dish.html')
 
     return HttpResponse(template.render(context, request))
 
@@ -241,7 +246,7 @@ def catalog_ingredient(request):
         page = request.GET.get('page')
         product = paginator.get_page(page)
 
-    template = loader.get_template('ingredient_catalog.html')
+    template = loader.get_template('models/ingredient_catalog.html')
     context = {
         'product': product,
         'edit': edit,
@@ -259,13 +264,15 @@ def create_ingredient(request):
     if request.method == 'POST':
         form = NewIngredient(request.POST)
         if form.is_valid():
-            ing = Ingredient(name=form.cleaned_data['name'], units=form.cleaned_data['units'],
-                             description=form.cleaned_data['description'])
+            ing = Ingredient(name=form.cleaned_data['name'], description=form.cleaned_data['description'],
+                             energy = form.cleaned_data['energy'], proteins = form.cleaned_data['proteins'],
+                             fats = form.cleaned_data['fats'], carbohydrate = form.cleaned_data['carbohydrate'])
             ing.save()
+            return HttpResponseRedirect('{}'.format(ing.id))
     else:
         form=NewIngredient()
 
-    template = loader.get_template('create_ingredient.html')
+    template = loader.get_template('models/create_ingredient.html')
     context = {
         'form': form,
     }
@@ -300,7 +307,7 @@ def catalog_recipe(request):
         page = request.GET.get('page')
         menu = paginator.get_page(page)
 
-    template = loader.get_template('catalog.html')
+    template = loader.get_template('models/catalog.html')
     context = {
         'menu': menu,
         'edit': edit,
@@ -309,7 +316,7 @@ def catalog_recipe(request):
 
 def create_dish(request):
     """
-    View page for Dish creation. Ingredients adds after creation.
+    View page for Dish creation. Ingredients can be added right now.
     :param request: Django request
     :return: HttpResponse
     """
@@ -317,7 +324,7 @@ def create_dish(request):
         raise PermissionDenied
 
     i_list = request.session.setdefault('i_list', [])
-    ingredients_list = [(Ingredient.objects.get(id=i[0]), i[1]) for i in request.session['i_list']]
+    ingredients_list = [(Ingredient.objects.get(id=i[0]), i[1], Unit.objects.get(id=i[2])) for i in request.session['i_list']]
 
     if request.method == 'POST':
         form = NewDish(request.POST)
@@ -335,24 +342,26 @@ def create_dish(request):
                 break
 
         if not_deleted and form_ing.is_valid():
-            ing_param = (form_ing.cleaned_data['ingredient'].id, float(form_ing.cleaned_data['amount']))
+            ing_param = (form_ing.cleaned_data['ingredient'].id, float(form_ing.cleaned_data['amount']),
+                         form_ing.cleaned_data['units'].id)
             i_list = request.session['i_list']
             request.session['i_list'] = i_list + [ing_param,]
         elif not_deleted and form.is_valid():
             d = Dish(name=form.cleaned_data['name'], description=form.cleaned_data['description'])
             d.save()
             for ing in ingredients_list:
-                ing2rec = Recipe(dish_id=d.id, ingredient_id=ing[0].id, amount=ing[1])
+                ing2rec = Recipe(dish_id=d.id, ingredient_id=ing[0].id, amount=ing[1], units_id=ing[2].id)
+                request.session['i_list'] = []
                 ing2rec.save()
 
             return HttpResponseRedirect('{}'.format(d.id))
 
-        ingredients_list = [(Ingredient.objects.get(id=i[0]), i[1]) for i in request.session['i_list']]
+        ingredients_list = [(Ingredient.objects.get(id=i[0]), i[1], Unit.objects.get(id=i[2])) for i in request.session['i_list']]
     else:
         form = NewDish()
         form_ing = DishForm()
 
-    template = loader.get_template('create_dish.html')
+    template = loader.get_template('models/create_dish.html')
     context = {
         'form': form,
         'form_ing': form_ing,
@@ -369,7 +378,7 @@ def ingredient_error(request, ing):
     """
     ingredient_name = ing.name
     recipes_list = Recipe.objects.filter(ingredient=ing.id)
-    template = loader.get_template('delete_error.html')
+    template = loader.get_template('models/delete_error.html')
     context = {
         "ingredient_name": ingredient_name,
         "recipes_list": recipes_list,

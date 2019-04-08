@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Dish, Ingredient, Recipe
+from .models import Dish, Ingredient, Recipe, Unit
 
 class NewIngredient(forms.Form):
     """
@@ -8,17 +8,22 @@ class NewIngredient(forms.Form):
     1) Description use big TextArea to nice view
     """
     name = forms.CharField(max_length = 40)
-    units = forms.CharField(max_length=10)
-    description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}))
-
+    description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}), required = False)
+    energy = forms.DecimalField(required = False)
+    proteins = forms.DecimalField(required = False)
+    fats = forms.DecimalField(required = False)
+    carbohydrate = forms.DecimalField(required = False)
 
 class EditIngredient(forms.Form):
     """
     Form for editing Ingredient after creation.
     """
     name = forms.CharField(max_length = 40)
-    units = forms.CharField(max_length=10)
     description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}), required = False)
+    energy = forms.DecimalField(required=False)
+    proteins = forms.DecimalField(required=False)
+    fats = forms.DecimalField(required=False)
+    carbohydrate = forms.DecimalField(required=False)
 
 
 class AddIngredient(forms.Form):
@@ -34,7 +39,6 @@ class NewDish(forms.Form):
     1) Description use big TextArea to nice view
     """
     name = forms.CharField(max_length = 100)
-    #ingredients = forms.MultipleChoiceField(models.ingredient_for_choice()) Need to create something better
     description = forms.CharField(widget=forms.Textarea(attrs = {'rows': 10, 'cols': 80}), required = False)
 
 
@@ -44,3 +48,4 @@ class DishForm(forms.Form):
     """
     ingredient = forms.ModelChoiceField(queryset=Ingredient.objects.all())
     amount = forms.DecimalField(max_digits = 10, decimal_places = 1)
+    units = forms.ModelChoiceField(queryset=Unit.objects.all())
