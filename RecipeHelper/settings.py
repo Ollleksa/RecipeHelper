@@ -73,17 +73,46 @@ WSGI_APPLICATION = 'RecipeHelper.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        #'PASSWORD': 'welcome!',
-        'HOST': 'db',
-        'PORT': 5432,
+# [START db_setup]
+if os.getenv('GAE_APPLICATION', None):
+    # Running on production App Engine, so connect to Google Cloud SQL using
+    # the unix socket at /cloudsql/<your-cloudsql-connection string>
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'HOST': '/cloudsql/docker-tryout:europe-west3:recipehelperdb1',
+            'USER': 'oleksabunyk@gmail.com',
+            'PASSWORD': 'Welcome!',
+            'NAME': 'recipehelperdb1',
+        }
     }
-}
+
+else:
+    # Running locally so connect to either a local SQL instance or connect
+    # to Cloud SQL via the proxy.  To start the proxy via command line:
+    #    $ cloud_sql_proxy -instances=docker-tryout:europe-west3:recipehelperdb1=tcp:5432
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'PASSWORD': 'Welcome!',
+        }
+    }
+# [END db_setup]
+
+#DATABASES = {
+  # 'default': {
+   #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #    'NAME': 'postgres',
+     #   'USER': 'postgres',
+      #  #'PASSWORD': 'welcome!',
+       # 'HOST': 'db',
+        #'PORT': 5432,
+    #}
+#}
 
 
 # Password validation
@@ -126,6 +155,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+STATIC_ROOT = 'static'
 
 # Redirect to home
 LOGIN_REDIRECT_URL = '/'
